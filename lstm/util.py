@@ -4,7 +4,7 @@ from time import time
 import sys
 import pickle
 
-np.random.seed(0)
+#np.random.seed(0)
 
 __start = str(int(time()))
 
