@@ -7,8 +7,6 @@ from pybrain.supervised import BackpropTrainer
 from pybrain.datasets import SequentialDataSet
 from util import *
 
-#dataset = generate(6) + generate(7)
-
 dataset_a = [[6, 8, 7, 4, 2, 3, 0],
              [1, 8, 7, 4, 2, 3, 5],
              [6, 3, 4, 2, 7, 8, 5],
@@ -41,6 +39,8 @@ def window(data):
 net = buildNetwork(25, 20, 25, hiddenclass=LSTMLayer,
                    bias=True, outputbias=False, recurrent=True)
 trainer = BackpropTrainer(net, dataset=SequentialDataSet(25, 25), learningrate=0.01, momentum=0)
+
+reset_encoder()
 
 history = []
 
