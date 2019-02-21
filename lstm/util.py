@@ -4,8 +4,6 @@ from time import time
 import sys
 import pickle
 
-#np.random.seed(0)
-
 __start = str(int(time()))
 
 class __LogPrint(object):
@@ -47,9 +45,10 @@ def generate(order, seed=42):
 def MAPE(groundTruth, prediction):
     return np.nanmean(np.abs(groundTruth - prediction)) / np.nanmean(np.abs(groundTruth))
 
-__encodings = {}
+__encodings = None
 
-def reset_encoder():
+def reset_encoder(seed=0):
+    np.random.seed(seed)
     global __encodings
     __encodings = {}
 
