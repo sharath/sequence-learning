@@ -46,8 +46,11 @@ def MAPE(groundTruth, prediction):
     return np.nanmean(np.abs(groundTruth - prediction)) / np.nanmean(np.abs(groundTruth))
 
 __encodings = None
+__seed = None
 
 def reset_encoder(seed=0):
+    global __seed
+    __seed = seed
     np.random.seed(seed)
     global __encodings
     __encodings = {}
@@ -84,11 +87,12 @@ def decode(vector):
 
 __seen_noise = set()
 
-def noise():
-    global __settings, __seen_noise
+def noise(it):
+    global __settings, __seen_noise, __seed
+    np.random.seed(__seed+it)
     lower = __settings['max_order'] + 1
     ret = np.random.randint(lower, lower+50001)
-    if ret in __seen_noise:
-        return noise()
+    while ret in __seen_noise:
+        ret = np.random.randint(lower, lower+50001)
     __seen_noise.add(ret)
     return ret
