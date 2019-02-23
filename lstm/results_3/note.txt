@@ -1,0 +1,3 @@
+these are the results for seed = 100
+
+also fixed the order and hidden state is correct

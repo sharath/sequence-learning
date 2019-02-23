@@ -29,7 +29,7 @@ def refresh(seq, tar, it):
     dataset = dataset_a if it < 10000 else dataset_b
     chosen = np.random.choice(dataset)
     target = chosen[1:] + [-1] + [-1]
-    seq.extend(chosen+ [noise()])
+    seq.extend(chosen + [noise(it)])
     tar.extend(target)
 
 def window(data):
@@ -39,18 +39,17 @@ def window(data):
 net = buildNetwork(25, 20, 25, hiddenclass=LSTMLayer,
                    bias=True, outputbias=False, recurrent=True)
 trainer = BackpropTrainer(net, dataset=SequentialDataSet(25, 25), learningrate=0.01, momentum=0)
-
-reset_encoder()
+reset_encoder(100)
 
 history = []
-
 sequence = []
 target = []
-compute_counter = 0
-refresh(sequence, target, 0)
-start_logging()
 
+refresh(sequence, target, 0)
+
+start_logging()
 print 'it,current,target,prediction,correct'
+
 for it in range(1, 20000):
     curs = sequence.pop(0)
     tars = target.pop(0)
@@ -72,7 +71,7 @@ for it in range(1, 20000):
 
     # get the hidden state right
     net.reset()
-    for symbol in tsegment:
+    for symbol in tsegment[:-1]:
          _ = net.activate(encode(symbol))
     
     output = net.activate(encode(curs))
@@ -82,4 +81,3 @@ for it in range(1, 20000):
         print ','.join([str(i) for i in [it, curs, tars, prediction, correct]])
     
     sys.stdout.flush()
-    #save_encodings()
