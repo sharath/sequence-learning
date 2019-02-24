@@ -37,7 +37,7 @@ class Encoder():
         nearest = None
         best = float('inf')
         for x, e in self.encodings.items():
-            dist = (torch.sum((v - x).pow(2))).pow(0.5)
+            dist = (torch.sum((v - e).pow(2))).pow(0.5)
             if dist < best:
                 best = dist
                 nearest = x
