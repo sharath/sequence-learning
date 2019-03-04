@@ -45,10 +45,16 @@ def refresh(seq, tar, it):
 
 def get_model():
     if os.path.isfile('/home/sharathramku/Jupyter/sequence-learning/htm/htm.model'):
-        return ModelFactory.loadFromCheckpoint('/home/sharathramku/Jupyter/sequence-learning/htm/htm.model')
+        f = open('htm.model', 'rb')
+        d = pickle.load(f)
+        f.close()
+        return d['model']
+    f = open('htm.model', 'wb')
     htm = ModelFactory.create(MODEL_PARAMS)
     htm.enableInference({"predictedField": "element"})
-    htm.save('/home/sharathramku/Jupyter/sequence-learning/htm/htm.model')
+    d = {'model': htm}
+    pickle.dump(d, f)
+    f.close()
     return get_model()
 
 
