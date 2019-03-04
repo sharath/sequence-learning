@@ -1,5 +1,5 @@
 # sequence-learning
-Sequence Learning Models for Time Series Data. Adapted from *Continuous Online Sequence Learning with an Unsupervised Neural Network Model*.
+Adapted from *Continuous Online Sequence Learning with an Unsupervised Neural Network Model*.
 
 ## Time delay neural network (TDNN)
 
