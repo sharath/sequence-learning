@@ -8,7 +8,9 @@ import numpy as np
 from bindsnet.conversion import ann_to_snn
 from bindsnet.network.monitors import Monitor
 from dataset import dataset_a, dataset_b, Encoder
+from util import start_logging
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
+torch.cuda.set_device(1)
 
 class TDNN(nn.Module):
     def __init__(self):
@@ -20,19 +22,8 @@ class TDNN(nn.Module):
 
     def forward(self, x):
         return self.seq(x)
-    
-class TDPAE(nn.Module):
-    def __init__(self):
-        super(TDPAE, self).__init__()
-        self.seq = nn.Sequential(
-            nn.Linear(10*25, 200),
-            nn.Linear(200, 10*25)
-        )
 
-    def forward(self, x):
-        return self.seq(x)
-    
-seed = 10
+seed = 100
 def refresh(sequence, target, it):
     dataset = dataset_a if it < 10000 else dataset_b
     torch.manual_seed(seed+it)
@@ -44,16 +35,14 @@ def refresh(sequence, target, it):
     
 criterion = nn.MSELoss()
 tdnn = TDNN()
-tdpae = TDPAE()
-tdnn_optim = optim.SGD(tdnn.parameters(), lr=0.01, momentum=0.1)
-tdpae_optim = optim.SGD(tdpae.parameters(), lr=0.01, momentum=0.1)
+tdnn_optim = optim.SGD(tdnn.parameters(), lr=0.01, momentum=0.5)
 encoder = Encoder(seed)
 
 runtime = 500
 history, sequence, target = [], [], []
 refresh(sequence, target, 0)
-
-print('it,current,target,random_prediction,tdnn_prediction,tdpae_prediction,tdsnn_prediction,tdnn_tl,tdpae_tl')
+start_logging()
+print('it,current,target,random_prediction,tdnn_prediction,tdsnn_prediction,tdnn_tl')
 for it in range(0, 20000):
     csymbol = sequence.pop(0)
     tsymbol = target.pop(0)
@@ -65,34 +54,23 @@ for it in range(0, 20000):
     if it < 11:
         continue
         
-    tdpae_tl = 0
     tdnn_tl = 0
         
     if it > 1000:
         train = history[max(0, len(history) - 3000):]
-        for _ in range(5):
+        for _ in range(1):
             for i in range(len(train)-10):
                 x = train[i:i+10]
-                y = train[i+1:i+11]
+                y = train[i+10]
                 
                 x_enc = torch.zeros(10*25)
                 for j, s in enumerate(x):
                     x_enc[j*25:(j+1)*25] = encoder.encode(s)
+                y_enc = encoder.encode(train[i+10])
                     
-                y_enc = torch.zeros(10*25)
-                for j, s in enumerate(y):
-                    y_enc[j*25:(j+1)*25] = encoder.encode(s)
-                    
-                tdpae_optim.zero_grad()
-                tdpae_y_hat = tdpae(x_enc)
-                tdpae_loss = criterion(tdpae_y_hat, y_enc)
-                tdpae_loss.backward()
-                tdpae_optim.step()
-                tdpae_tl += tdpae_loss.item()
-                
                 tdnn_optim.zero_grad()
                 tdnn_y_hat = tdnn(x_enc)
-                tdnn_loss = criterion(tdnn_y_hat, y_enc[225:])
+                tdnn_loss = criterion(tdnn_y_hat, y_enc)
                 tdnn_loss.backward()
                 tdnn_optim.step()
                 tdnn_tl += tdnn_loss.item()
@@ -106,9 +84,6 @@ for it in range(0, 20000):
         snn = ann_to_snn(tdnn, input_shape=(1, 250))
         snn.add_monitor(monitor=Monitor(obj=snn.layers['2'], state_vars=['s']), name='output_monitor')
         snn.run({'Input': x_enc.repeat(runtime, 1)}, time=runtime)
-            
-        tdpae_output = tdpae(x_enc)
-        tdpae_prediction = encoder.decode(tdpae_output[225:])
         
         tdnn_output = tdnn(x_enc)
         tdnn_prediction = encoder.decode(tdnn_output)
@@ -119,5 +94,5 @@ for it in range(0, 20000):
         
         random_prediction = encoder.decode(torch.rand((25,))*2 - 1)
     
-        print(f'{it},{csymbol},{tsymbol},{random_prediction},{tdnn_prediction},{tdpae_prediction},{tdsnn_prediction},{tdnn_tl},{tdpae_tl}')
+        print(f'{it},{csymbol},{tsymbol},{random_prediction},{tdnn_prediction},{tdsnn_prediction},{tdnn_tl}')
         sys.stdout.flush()
