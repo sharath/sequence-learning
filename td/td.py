@@ -2,7 +2,7 @@ import sys
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torch.functional as F
+import torch.nn.functional as F
 
 import numpy as np
 from bindsnet.conversion import ann_to_snn
@@ -15,13 +15,13 @@ torch.set_default_tensor_type('torch.cuda.FloatTensor')
 class TDNN(nn.Module):
     def __init__(self):
         super(TDNN, self).__init__()
-        self.seq = nn.Sequential(
-            nn.Linear(10*25, 200),
-            nn.Linear(200, 25)
-        )
+        self.fc1 = nn.Linear(10*25, 200)
+        self.fc2 = nn.Linear(200, 25)
 
     def forward(self, x):
-        return self.seq(x)
+        x = torch.sigmoid(self.fc1(x))
+        x = self.fc2(x)
+        return x
 
 seed = 100
 def refresh(sequence, target, it):
