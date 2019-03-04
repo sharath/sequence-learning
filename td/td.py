@@ -10,7 +10,7 @@ from bindsnet.network.monitors import Monitor
 from dataset import dataset_a, dataset_b, Encoder
 from util import start_logging
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
-torch.cuda.set_device(1)
+#torch.cuda.set_device(1)
 
 class TDNN(nn.Module):
     def __init__(self):
@@ -41,7 +41,7 @@ encoder = Encoder(seed)
 runtime = 500
 history, sequence, target = [], [], []
 refresh(sequence, target, 0)
-start_logging()
+#start_logging()
 print('it,current,target,random_prediction,tdnn_prediction,tdsnn_prediction,tdnn_tl')
 for it in range(0, 20000):
     csymbol = sequence.pop(0)
