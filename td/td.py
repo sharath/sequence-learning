@@ -42,7 +42,7 @@ runtime = 500
 history, sequence, target = [], [], []
 refresh(sequence, target, 0)
 #start_logging()
-print('it,current,target,random_prediction,tdnn_prediction,tdsnn_prediction,tdnn_tl')
+print('it,current,target,random_prediction,tdnn_prediction,tdsnn_prediction,tdsnn_softmax_prediction,tdnn_tl')
 for it in range(0, 20000):
     csymbol = sequence.pop(0)
     tsymbol = target.pop(0)
@@ -82,17 +82,22 @@ for it in range(0, 20000):
             x_enc[j*25:(j+1)*25] = encoder.encode(s)
             
         snn = ann_to_snn(tdnn, input_shape=(1, 250))
-        snn.add_monitor(monitor=Monitor(obj=snn.layers['2'], state_vars=['s']), name='output_monitor')
+        snn.add_monitor(monitor=Monitor(obj=snn.layers['2'], state_vars=['s', 'v']), name='output_monitor')
         snn.run({'Input': x_enc.repeat(runtime, 1)}, time=runtime)
         
         tdnn_output = tdnn(x_enc)
         tdnn_prediction = encoder.decode(tdnn_output)
         
         output_spikes = snn.monitors['output_monitor'].get('s')
+        output_voltages = snn.monitors['output_monitor'].get('v')
+        
         tdsnn_output = torch.sum(output_spikes, dim=1).float() / (runtime*0.5)
         tdsnn_prediction = encoder.decode(tdsnn_output)
         
+        tdsnn_softmax_output = 2*torch.softmax(torch.sum(output_voltages, dim=1), -1)-1
+        tdsnn_softmax_prediction = encoder.decode(tdsnn_softmax_output)
+
         random_prediction = encoder.decode(torch.rand((25,))*2 - 1)
     
-        print(f'{it},{csymbol},{tsymbol},{random_prediction},{tdnn_prediction},{tdsnn_prediction},{tdnn_tl}')
+        print(f'{it},{csymbol},{tsymbol},{random_prediction},{tdnn_prediction},{tdsnn_prediction},{tdsnn_softmax_prediction},{tdnn_tl}')
         sys.stdout.flush()

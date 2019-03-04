@@ -44,11 +44,11 @@ def refresh(seq, tar, it):
 
 
 def get_model():
-    if os.path.isfile('htm.model'):
-        return ModelFactory.loadFromCheckpoint('htm.model')
+    if os.path.isfile('/home/sharathramku/Jupyter/sequence-learning/htm/htm.model'):
+        return ModelFactory.loadFromCheckpoint('/home/sharathramku/Jupyter/sequence-learning/htm/htm.model')
     htm = ModelFactory.create(MODEL_PARAMS)
     htm.enableInference({"predictedField": "element"})
-    htm.save('htm.model')
+    htm.save('/home/sharathramku/Jupyter/sequence-learning/htm/htm.model')
     return get_model()
 
 
