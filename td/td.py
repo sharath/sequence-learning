@@ -20,7 +20,7 @@ class TDNN(nn.Module):
 
     def forward(self, x):
         x = torch.sigmoid(self.fc1(x))
-        x = self.fc2(x)
+        x = torch.sigmoid(self.fc2(x))
         return x
 
 seed = 100
