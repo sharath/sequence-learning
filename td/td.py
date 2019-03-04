@@ -57,9 +57,9 @@ for it in range(0, 20000):
     tdnn_tl = 0
         
     if it > 1000:
-        train = history[max(0, len(history) - 3000):]
+        train = history[max(0, len(history) - 1000):]
         for _ in range(1):
-            for i in range(len(train)-10):
+            for i in range(len(train)-11):
                 x = train[i:i+10]
                 y = train[i+10]
                 
