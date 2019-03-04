@@ -1,7 +1,8 @@
 import os
-import pickle
+import dill
 import numpy as np
 from nupic.frameworks.opf.model_factory import ModelFactory
+from nupic.data.inference_shifter import InferenceShifter
 from config import MODEL_PARAMS
 
 dataset_a = [[6, 8, 7, 4, 2, 3, 0],
@@ -46,24 +47,36 @@ def refresh(seq, tar, it):
 def get_model():
     if os.path.isfile('/home/sharathramku/Jupyter/sequence-learning/htm/htm.model'):
         f = open('htm.model', 'rb')
-        d = pickle.load(f)
+        d = dill.load(f)
         f.close()
         return d['model']
     f = open('htm.model', 'wb')
     htm = ModelFactory.create(MODEL_PARAMS)
     htm.enableInference({"predictedField": "element"})
     d = {'model': htm}
-    pickle.dump(d, f)
+    dill.dump(d, f)
     f.close()
     return get_model()
 
+htm = get_model()
 
-from time import time
-start = time()
-t = get_model()
-print(time()-start)
-start = time()
-t = get_model()
-print(time()-start)
+shifter = InferenceShifter()
+print(vars(htm))
 
+history = []
+sequence = []
+target = []
 
+refresh(sequence, target, 0)
+
+for it in range(1, 20000):
+    curs = sequence.pop(0)
+    tars = target.pop(0)
+    history.append(curs)
+
+    if len(sequence) == 0:
+        refresh(sequence, target, it)
+    
+    result = shifter.shift(htm.run({"element": curs}))
+    tm = htm._getTPRegion().getSelf()._tfdr
+    
