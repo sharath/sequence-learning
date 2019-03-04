@@ -43,7 +43,6 @@ def refresh(sequence, target, it):
     sequence.extend(c + [int(encoder.noise(it))])
     target.extend(t)
     
-
 criterion = nn.MSELoss()
 tdnn = TDNN()
 tdpae = TDPAE()
@@ -67,7 +66,6 @@ for it in range(0, 20000):
 
     if it < 11:
         continue
-        
         
     tdpae_tl = 0
     tdnn_tl = 0
@@ -100,8 +98,7 @@ for it in range(0, 20000):
                 tdnn_loss.backward()
                 tdnn_optim.step()
                 tdnn_tl += tdnn_loss.item()
-                
-
+    
     if len(sequence) == 2:
         x = history[-10:]
         x_enc = torch.zeros(10*25)
