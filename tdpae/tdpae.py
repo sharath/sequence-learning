@@ -7,6 +7,7 @@ import torch.functional as F
 import numpy as np
 from util import start_logging
 from dataset import dataset_a, dataset_b, Encoder
+torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 class TDNN(nn.Module):
     def __init__(self):
