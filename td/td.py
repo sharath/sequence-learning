@@ -7,7 +7,6 @@ import torch.functional as F
 import numpy as np
 from bindsnet.conversion import ann_to_snn
 from bindsnet.network.monitors import Monitor
-from util import start_logging
 from dataset import dataset_a, dataset_b, Encoder
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -53,7 +52,7 @@ encoder = Encoder(seed)
 runtime = 500
 history, sequence, target = [], [], []
 refresh(sequence, target, 0)
-start_logging()
+
 
 print('it,current,target,random_prediction,tdnn_prediction,tdpae_prediction,tdsnn_prediction,tdnn_tl,tdpae_tl')
 for it in range(0, 20000):
