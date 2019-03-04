@@ -14,4 +14,4 @@ Adapted from *Continuous Online Sequence Learning with an Unsupervised Neural Ne
 
 ## Results
 
-![Results](temp-plots/results.png)
+![Results](results/results.png)
