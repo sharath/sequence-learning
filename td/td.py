@@ -35,7 +35,7 @@ def refresh(sequence, target, it):
     
 criterion = nn.MSELoss()
 tdnn = TDNN()
-tdnn_optim = optim.SGD(tdnn.parameters(), lr=0.01, momentum=0.5)
+tdnn_optim = optim.SGD(tdnn.parameters(), lr=0.01)#, momentum=0.5)
 encoder = Encoder(seed)
 
 runtime = 500
