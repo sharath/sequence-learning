@@ -1,3 +1,4 @@
+import sys
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -119,3 +120,4 @@ for it in range(0, 20000):
         random_prediction = encoder.decode(torch.rand((25,))*2 - 1)
     
         print(f'{it},{csymbol},{tsymbol},{random_prediction},{tdnn_prediction},{tdpae_prediction},{tdsnn_prediction},{tdnn_tl},{tdpae_tl}')
+        sys.stdout.flush()
