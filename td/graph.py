@@ -21,15 +21,16 @@ plt.rcParams['figure.figsize'] = [20, 10]
 def read_log(fname, minl):
     file = open(fname, 'r')
     x = []
-    baseline, tdnn, tdsnn = [], [], []
+    baseline, tdnn, tdsnn, tdsnnv  = [], [], [], []
     next(file)
     for line in file.readlines()[:minl]:
-        it,current,target,random_prediction,tdnn_prediction,tdsnn_prediction,tdnn_tl = line.replace('\n','').split(',')
+        it,current,target,random_prediction,tdnn_prediction,tdsnn_prediction,tdsnn_softmax_prediction,tdnn_tl = line.replace('\n','').split(',')
         x.append(float(it))
         baseline.append(float(target==random_prediction))
         tdnn.append(float(target==tdnn_prediction))
         tdsnn.append(float(target==tdsnn_prediction))
-    return x, baseline, tdnn, tdsnn
+        tdsnnv.append(float(target==tdsnn_softmax_prediction))
+    return x, baseline, tdnn, tdsnn, tdsnnv
 
 
 # In[37]:
@@ -57,13 +58,14 @@ for log in logs:
 # In[39]:
 
 
-baseline_acc, tdnn_acc, tdsnn_acc = [], [], []
+baseline_acc, tdnn_acc, tdsnn_acc, tdsnnv_acc = [], [], [], []
 x = None
 for log in logs:
-    x, baseline, tdnn, tdsnn = read_log(log, minl)
+    x, baseline, tdnn, tdsnn, tdsnnv = read_log(log, minl)
     baseline_acc.append(moving_average(baseline, min(len(baseline), 100)))
     tdnn_acc.append(moving_average(tdnn, min(len(tdnn), 100)))
     tdsnn_acc.append(moving_average(tdsnn, min(len(tdsnn), 100)))
+    tdsnnv_acc.append(moving_average(tdsnnv, min(len(tdsnnv), 100)))
     
 plt.plot(x, np.mean(baseline_acc, axis=0), label='Random', linewidth=1, color='black')
 plt.fill_between(x, (np.mean(baseline_acc, axis=0)+np.std(baseline_acc, axis=0)), (np.mean(baseline_acc, axis=0)-np.std(baseline_acc, axis=0)), color=(0.5,0,0.5,0.1))
@@ -75,6 +77,10 @@ plt.fill_between(x, (np.mean(tdnn_acc, axis=0)+np.std(tdnn_acc, axis=0)), (np.me
 
 plt.plot(x, np.mean(tdsnn_acc, axis=0), label='TDSNN', linewidth=1, color='orange')
 plt.fill_between(x, (np.mean(tdsnn_acc, axis=0)+np.std(tdsnn_acc, axis=0)), (np.mean(tdsnn_acc, axis=0)-np.std(tdsnn_acc, axis=0)), color=(0.5,0,0.5,0.1))
+
+
+plt.plot(x, np.mean(tdsnnv_acc, axis=0), label='TDSNNV', linewidth=1, color='yellow')
+plt.fill_between(x, (np.mean(tdsnnv_acc, axis=0)+np.std(tdsnnv_acc, axis=0)), (np.mean(tdsnnv_acc, axis=0)-np.std(tdsnnv_acc, axis=0)), color=(0.5,0,0.5,0.1))
 
 plt.plot([10000, 10000], [0, 1], linewidth=5, color='black')
 plt.ylim(0, 1.0)
