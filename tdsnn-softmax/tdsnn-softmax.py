@@ -11,6 +11,9 @@ from dataset import dataset_a, dataset_b, Encoder
 from util import start_logging
 
 
+torch.set_default_tensor_type('torch.cuda.FloatTensor')
+
+
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -91,7 +94,7 @@ for it in range(0, 20000):
     snn.run({'Input': x_enc.repeat(runtime, 1)}, time=runtime)
 
     output_voltages = snn.monitors['output_monitor'].get('v')
-    tdsnn_output = 2*torch.softmax(torch.sum(output_voltages, dim=1))-1
+    tdsnn_output = 2*torch.softmax(torch.sum(output_voltages, dim=1), -1)-1
     tdsnn_prediction = encoder.decode(tdsnn_output)
     
     tdnn_output = ann(x_enc)
