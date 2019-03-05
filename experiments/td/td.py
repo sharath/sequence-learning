@@ -42,7 +42,7 @@ runtime = 500
 history, sequence, target = [], [], []
 refresh(sequence, target, 0)
 #start_logging()
-print('it,current,target,random_prediction,tdnn_prediction,tdsnn_prediction,tdsnn_softmax_prediction,tdnn_tl')
+print('it,current,target,random_prediction,tdnn_prediction,tdsnn_prediction,tdsnn_voltage_prediction,tdnn_tl')
 for it in range(0, 20000):
     csymbol = sequence.pop(0)
     tsymbol = target.pop(0)
@@ -94,10 +94,12 @@ for it in range(0, 20000):
         tdsnn_output = torch.sum(output_spikes, dim=1).float() / (runtime*0.5)
         tdsnn_prediction = encoder.decode(tdsnn_output)
         
-        tdsnn_softmax_output = 2*torch.softmax(torch.sum(output_voltages, dim=1), -1)-1
-        tdsnn_softmax_prediction = encoder.decode(tdsnn_softmax_output)
+        tdsnn_summed_voltage = torch.sum(output_voltages, dim=1)
+        m, s = torch.mean(tdsnn_summed_voltage), torch.std(tdsnn_summed_voltage)
+        tdsnn_voltage_output = torch.clamp((tdsnn_summed_voltage - m)/(3*s), -1, 1)
+        tdsnn_voltage_prediction = encoder.decode(tdsnn_voltage_output)
 
         random_prediction = encoder.decode(torch.rand((25,))*2 - 1)
     
-        print(f'{it},{csymbol},{tsymbol},{random_prediction},{tdnn_prediction},{tdsnn_prediction},{tdsnn_softmax_prediction},{tdnn_tl}')
+        print(f'{it},{csymbol},{tsymbol},{random_prediction},{tdnn_prediction},{tdsnn_prediction},{tdsnn_voltage_prediction},{tdnn_tl}')
         sys.stdout.flush()
