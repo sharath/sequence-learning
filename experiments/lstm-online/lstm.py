@@ -12,17 +12,13 @@ from util import start_logging
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 #torch.cuda.set_device(1)
 
-class TDNN(nn.Module):
+class LSTM(nn.Module):
     def __init__(self):
-        super(TDNN, self).__init__()
-        self.fc1 = nn.Linear(10*25, 200)
-        self.fc2 = nn.Linear(200, 25)
-
+        super(LSTM, self).__init__()
+        self.lstm = nn.LSTM(input_size=25, hidden_size=20, num_layers)
 
     def forward(self, x):
-        x = torch.sigmoid(self.fc1(x))
-        x = torch.sigmoid(self.fc2(x))
-        return x
+        return self.lstm(x)
 
 seed = 100
 def refresh(sequence, target, it):
@@ -35,11 +31,10 @@ def refresh(sequence, target, it):
     target.extend(t)
     
 criterion = nn.MSELoss()
-tdnn = TDNN()
-tdnn_optim = optim.SGD(tdnn.parameters(), lr=0.01)#, momentum=0.5)
+lstm = LSTM()
+lstm_optim = optim.SGD(tdnn.parameters(), lr=0.01)#, momentum=0.5)
 encoder = Encoder(seed)
 
-runtime = 250
 history, sequence, target = [], [], []
 refresh(sequence, target, 0)
 #start_logging()
@@ -55,26 +50,21 @@ for it in range(0, 20000):
     if it < 11:
         continue
         
-    tdnn_tl = 0
+    lstm_tl = 0
         
     if it > 1000:
         train = history[max(0, len(history) - 1000):]
         for _ in range(1):
-            for i in range(len(train)-11):
-                x = train[i:i+10]
-                y = train[i+10]
-                
-                x_enc = torch.zeros(10*25)
-                for j, s in enumerate(x):
-                    x_enc[j*25:(j+1)*25] = encoder.encode(s)
-                y_enc = encoder.encode(train[i+10])
+            for i in range(len(train)-1):
+                x = train[i]
+                y = train[i+1]
                     
-                tdnn_optim.zero_grad()
-                tdnn_y_hat = tdnn(x_enc)
-                tdnn_loss = criterion(tdnn_y_hat, y_enc)
-                tdnn_loss.backward()
-                tdnn_optim.step()
-                tdnn_tl += tdnn_loss.item()
+                lstm_optim.zero_grad()
+                y_hat = lstm(encoder.encode(x))
+                lstm_loss = criterion(y_hat, encoder.encode(y))
+                lstm_loss.backward()
+                lstm_optim.step()
+                lstm_tl += lstm_loss.item()
     
     if len(sequence) == 2:
         x = history[-10:]
