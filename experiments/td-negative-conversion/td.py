@@ -45,7 +45,7 @@ runtime = 500
 history, sequence, target = [], [], []
 refresh(sequence, target, 0)
 
-print('it,current,target,tdnn_prediction,tdsnn_prediction,tdnn_tl,noise_level')
+print('it,current,target,tdnn_prediction,tdsnn_prediction,tdnn_tl')
 for it in range(0, 20000):
     csymbol = sequence.pop(0)
     tsymbol = target.pop(0)
