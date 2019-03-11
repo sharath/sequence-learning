@@ -9,7 +9,7 @@ from bindsnet.conversion import ann_to_snn
 from bindsnet.network.monitors import Monitor
 from dataset import dataset_a, dataset_b, Encoder
 from util import start_logging
-# torch.set_default_tensor_type('torch.cuda.FloatTensor')
+torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 
 class TDNN(nn.Module):
