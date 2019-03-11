@@ -39,7 +39,7 @@ tdnn = TDNN()
 tdnn_optim = optim.SGD(tdnn.parameters(), lr=0.01)
 encoder = Encoder(seed)
 
-runtime = 250
+runtime = 500
 history, sequence, target = [], [], []
 refresh(sequence, target, 0)
 
