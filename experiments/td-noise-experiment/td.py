@@ -86,7 +86,7 @@ for it in range(0, 20000):
         
         nlevel = 0.00005 * it
         if torch.rand(1) < nlevel:
-            loc = torch.randint(0, 10)
+            loc = torch.randint(0, (1, ))
             x_enc[loc*25:(loc+1)*25] += torch.randn(10*25)
             
 
