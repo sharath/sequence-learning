@@ -3,8 +3,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-
 import numpy as np
+
 from bindsnet.conversion import ann_to_snn
 from bindsnet.network.monitors import Monitor
 from bindsnet.conversion import SubtractiveResetIFNodes
@@ -22,7 +22,7 @@ class TDNN(nn.Module):
 
     def forward(self, x):
         x = torch.sigmoid(self.fc1(x))
-        x = torch.sigmoid(self.fc2(x))
+        x = self.fc2(x)
         return x
 
 seed = 100

@@ -3,14 +3,13 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-
 import numpy as np
+
 from bindsnet.conversion import ann_to_snn
 from bindsnet.network.monitors import Monitor
 from dataset import dataset_a, dataset_b, Encoder
 from util import start_logging
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
-
 
 class TDNN(nn.Module):
     def __init__(self):
@@ -87,7 +86,7 @@ for it in range(0, 20000):
         nlevel = 0.00005 * it
         if torch.rand(1) < nlevel:
             loc = torch.randint(0, 10, (1, ))
-            x_enc[loc*25:(loc+1)*25] += torch.randn(10*25)
+            x_enc[loc*25:(loc+1)*25] += torch.randn(25)
             
 
         snn = ann_to_snn(tdnn, input_shape=(1, 250))
@@ -99,7 +98,7 @@ for it in range(0, 20000):
         
         output_spikes = snn.monitors['output_monitor'].get('s')
         
-        tdsnn_output = torch.sum(output_spikes, dim=1).float() / (runtime*0.5)
+        tdsnn_output = (torch.sum(output_spikes, dim=1).float() / (runtime*0.5)) - 1
         tdsnn_prediction = encoder.decode(tdsnn_output)
         
         print(f'{it},{csymbol},{tsymbol},{tdnn_prediction},{tdsnn_prediction},{tdnn_tl},{nlevel}')
