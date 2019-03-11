@@ -110,7 +110,7 @@ for it in range(0, 20000):
         raw_output_spikes = snn.monitors['output_monitor'].get('s')
         output_spikes = raw_output_spikes[:25] - raw_output_spikes[25:]
         
-        tdsnn_output = torch.sum(output_spikes, dim=1).float() / (runtime*0.5)
+        tdsnn_output = torch.sum(output_spikes, dim=1).float() / runtime
         tdsnn_prediction = encoder.decode(tdsnn_output)
         
         print(f'{it},{csymbol},{tsymbol},{tdnn_prediction},{tdsnn_prediction},{tdnn_tl}')
