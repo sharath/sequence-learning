@@ -21,6 +21,7 @@ class TDNN(nn.Module):
         return x
 
 def refresh(encoder, sequence, target, it, args):
+    torch.manual_seed(args.seed+it)
     dataset = dataset_a if it < 10000 else dataset_b
 
     c = list(dataset[torch.randint(0, len(dataset), (1, ))])
