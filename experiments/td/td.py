@@ -23,12 +23,11 @@ class TDNN(nn.Module):
 def refresh(encoder, sequence, target, it, args):
     dataset = dataset_a if it < 10000 else dataset_b
 
-    c = dataset[torch.randint(0, len(dataset), (1, ))]
+    c = list(dataset[torch.randint(0, len(dataset), (1, ))])
     for i in range(len(c)):
         u = float(torch.rand(1))
         if u < args.noise:
             c[i] = encoder.noise()
-
     t = c[1:] + [-1] + [-1]
 
     sequence.extend(c + [int(encoder.noise())])
