@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9423b3dc96dc03f46bd5eaa0e9d7068059705906862363d488a1329d520b0956"
+            "sha256": "bcc759b89543854c4ead98908a1a9f24288a11956ae5360a0b8d51e7f29f30d8"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -40,10 +40,10 @@
         },
         "certifi": {
             "hashes": [
-                "sha256:59b7658e26ca9c7339e00f8f4636cdfe59d34fa37b9b04f6f9e9926b3cece1a5",
-                "sha256:b26104d6835d1f5e49452a26eb2ff87fe7090b89dfcaee5ea2212697e1e1d7ae"
+                "sha256:47f9c83ef4c0c621eaef743f133f09fa8a74a9b75f037e8624f83bd1b6626cb7",
+                "sha256:993f830721089fef441cdfeb4b2c8c9df86f0c63239f06bd025a76a7daddb033"
             ],
-            "version": "==2019.3.9"
+            "version": "==2018.11.29"
         },
         "chardet": {
             "hashes": [
@@ -104,10 +104,10 @@
                 "array"
             ],
             "hashes": [
-                "sha256:7e9a3c053d8f503483d7357d5b8486c70250c4975b08b3d29f91ab7fc97736c3",
-                "sha256:959a96547939986bc906c84cb0d8d310da5f87dc5d121cff922555d26b91adf2"
+                "sha256:25ef28ef9715d7567d5457bb09f2904a2e4ffd9b9d6d646c3d100a6c08aed30f",
+                "sha256:37b28193e3edacb7c45d140eba211de4ed1f7c751061d926891129f0795c7c6f"
             ],
-            "version": "==1.1.4"
+            "version": "==1.1.3"
         },
         "decorator": {
             "hashes": [
@@ -118,7 +118,8 @@
         },
         "future": {
             "hashes": [
-                "sha256:67045236dcfd6816dc439556d009594abf643e5eb48992e36beac09c2ca659b8"
+                "sha256:67045236dcfd6816dc439556d009594abf643e5eb48992e36beac09c2ca659b8",
+                "sha256:8b0f0d66754a0d32ac1e2d584b8ee4d7a1b072344944afd86366f611eb97a200"
             ],
             "version": "==0.17.1"
         },
@@ -226,6 +227,7 @@
                 "sha256:dc235bf29a406dfda5790d01b998a1c01d7d37f449128c0b1b7d1c89a84fae8b",
                 "sha256:fb3c83554f39f48f3fa3123b9c24aecf681b1c289f9334f8215c1d3c8e2f6e5b"
             ],
+            "index": "pypi",
             "version": "==1.16.2"
         },
         "opencv-python": {
@@ -507,6 +509,7 @@
         },
         "toolz": {
             "hashes": [
+                "sha256:53bbce032de18fef46eaa60692ca1a19b9392109f58c73b51eea337136245263",
                 "sha256:929f0a7ea7f61c178bd951bdae93920515d3fbdbafc8e6caf82d752b9b3b31c9"
             ],
             "version": "==0.9.0"

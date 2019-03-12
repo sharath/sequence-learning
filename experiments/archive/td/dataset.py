@@ -19,10 +19,13 @@ dataset_b = [[6, 8, 7, 4, 2, 3, 5],
              [2, 4, 3, 5, 8, 7, 9, 6]]
 
 
+
 class Encoder():
-    def __init__(self):
+    def __init__(self, seed=0):
+        self.seed = seed
         self.encodings = {}
         self.seen = set()
+        torch.manual_seed(seed)
 
     def encode(self, x):
         if x in self.encodings:
@@ -40,9 +43,10 @@ class Encoder():
                 nearest = x
         return nearest
 
-    def noise(self):
-        n = int(torch.randint(500000, (1, )) + 10)
+    def noise(self, it):
+        torch.manual_seed(self.seed + it)
+        n = torch.randint(50000, (1, )) + 10
         while n in self.seen:
-            n = int(torch.randint(500000, (1, )) + 10)
+            n = torch.randint(50000, (1, )) + 10
         self.seen.add(n)
-        return int(n)
+        return n

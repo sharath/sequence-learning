@@ -1,2 +1,2 @@
 #!/bin/sh
-pipenv run python td.py
+pipenv run python td.py --noise $1

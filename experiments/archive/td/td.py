@@ -30,7 +30,7 @@ def refresh(sequence, target, it):
 
     c = dataset[torch.randint(0, len(dataset), (1, ))]
     t = c[1:] + [-1] + [-1]
-        
+
     sequence.extend(c + [int(encoder.noise(it))])
     target.extend(t)
     
@@ -39,11 +39,11 @@ tdnn = TDNN()
 tdnn_optim = optim.SGD(tdnn.parameters(), lr=0.01)
 encoder = Encoder(seed)
 
-runtime = 500
+runtime = 250
 history, sequence, target = [], [], []
 refresh(sequence, target, 0)
 
-print('it,current,target,tdnn_prediction,tdsnn_prediction,tdnn_tl,noise_level')
+print('it,current,target,tdnn_prediction,tdsnn_prediction,tdnn_tl')
 for it in range(0, 20000):
     csymbol = sequence.pop(0)
     tsymbol = target.pop(0)
@@ -54,9 +54,9 @@ for it in range(0, 20000):
 
     if it < 11:
         continue
-        
+    
     tdnn_tl = 0
-        
+    
     if it > 1000:
         train = history[max(0, len(history) - 1000):]
         for _ in range(1):
@@ -68,7 +68,7 @@ for it in range(0, 20000):
                 for j, s in enumerate(x):
                     x_enc[j*25:(j+1)*25] = encoder.encode(s)
                 y_enc = encoder.encode(train[i+10])
-                    
+                
                 tdnn_optim.zero_grad()
                 tdnn_y_hat = tdnn(x_enc)
                 tdnn_loss = criterion(tdnn_y_hat, y_enc)
@@ -82,24 +82,16 @@ for it in range(0, 20000):
         for j, s in enumerate(x):
             x_enc[j*25:(j+1)*25] = encoder.encode(s)
         
-        
-        nlevel = 0.00005 * it
-        if torch.rand(1) < nlevel:
-            loc = torch.randint(0, 10, (1, ))
-            x_enc[loc*25:(loc+1)*25] += torch.randn(25)
-            
-
         snn = ann_to_snn(tdnn, input_shape=(1, 250))
         snn.add_monitor(monitor=Monitor(obj=snn.layers['2'], state_vars=['s']), name='output_monitor')
         snn.run({'Input': x_enc.repeat(runtime, 1)}, time=runtime)
         
         tdnn_output = tdnn(x_enc)
         tdnn_prediction = encoder.decode(tdnn_output)
-        
         output_spikes = snn.monitors['output_monitor'].get('s')
         
         tdsnn_output = (torch.sum(output_spikes, dim=1).float() / (runtime*0.5))
         tdsnn_prediction = encoder.decode(tdsnn_output)
-        
-        print(f'{it},{csymbol},{tsymbol},{tdnn_prediction},{tdsnn_prediction},{tdnn_tl},{nlevel}')
+    
+        print(f'{it},{csymbol},{tsymbol},{tdnn_prediction},{tdsnn_prediction},{tdnn_tl}')
         sys.stdout.flush()
