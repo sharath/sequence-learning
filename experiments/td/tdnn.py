@@ -97,3 +97,4 @@ for it in range(11, 20000):
         y_hat_enc = tdnn(x_enc)
         y_hat = encoder.decode(y_hat_enc)
         print(f'{it},{y},{y_hat},{training_loss},{noise_level}')
+        sys.stdout.flush()

@@ -129,3 +129,4 @@ for it in range(11, 20000):
 
         tdsnn_prediction = encoder.decode(tdsnn_output)
         print(f'{it},{y},{tdnn_prediction},{tdsnn_prediction},{training_loss},{noise_level}')
+        sys.stdout.flush()
