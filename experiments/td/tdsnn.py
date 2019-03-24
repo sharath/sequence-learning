@@ -61,10 +61,10 @@ def add_noise(stream):
 tdnn = TDNN()
 criterion = nn.MSELoss()
 optimizer = optim.SGD(tdnn.parameters(), lr=0.01)
-original_stream = pickle.load(open('dataset.pkl', 'rb'))['clean']
+original_stream = pickle.load(open('dataset.pkl', 'rb'))['noisy']
 encoder = Encoder()
+encoder.precode(original_stream)
 stream = add_noise(original_stream)
-encoder.precode(stream)
 
 runtime = 500
 print('it,target,tdnn_prediction,tdsnn_prediction,training_loss,noise_level')
