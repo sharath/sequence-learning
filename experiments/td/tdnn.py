@@ -11,6 +11,7 @@ try:
     torch.set_default_tensor_type('torch.cuda.FloatTensor')
 except:
     pass
+
 class TDNN(nn.Module):
     def __init__(self):
         super(TDNN, self).__init__()
@@ -19,8 +20,8 @@ class TDNN(nn.Module):
 
     def forward(self, x):
         x = torch.sigmoid(self.fc1(x))
-        x = self.fc2(x)
-        return x
+        x = torch.sigmoid(self.fc2(x))
+        return x 
 
 class Encoder():
     def __init__(self):
@@ -48,10 +49,11 @@ class Encoder():
 
 def add_noise(stream):
     ret = list(stream)
+    subs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     for i in range(len(ret)):
         u = torch.rand(1)
         if u < noise_level:
-            ret[i] = stream[int(torch.randint(0, len(stream), (1, )))]
+            ret[i] = subs[int(torch.randint(0, len(subs), (1, )))]
     return ret
 
 tdnn = TDNN()
@@ -59,10 +61,10 @@ criterion = nn.MSELoss()
 optimizer = optim.SGD(tdnn.parameters(), lr=0.01)
 original_stream = pickle.load(open('dataset.pkl', 'rb'))['noisy']
 encoder = Encoder()
+encoder.precode(original_stream)
 stream = add_noise(original_stream)
-encoder.precode(stream)
 
-print('it,target,tdnn_prediction,training_loss,noise_level')
+print('it,target,tdnn_prediction,noise_level,training_loss')
 for it in range(11, 20000):
     training_loss = 0
     if it > 1000:
@@ -74,8 +76,7 @@ for it in range(11, 20000):
                 x_enc = torch.zeros(10*25)
                 for j, s in enumerate(x):
                     x_enc[j*25:(j+1)*25] = encoder.encode(s)
-                y_enc = encoder.encode(y)
-
+                y_enc = 0.5*encoder.encode(y)+0.5
 
                 y_hat = tdnn(x_enc)
                 optimizer.zero_grad()
@@ -84,7 +85,6 @@ for it in range(11, 20000):
                 optimizer.step()
                 training_loss += loss.item()
             
-
     if original_stream[it+2] > 10 or original_stream[it+2] == -1:
         x = stream[it-9:it+1]
         y = original_stream[it+1]
@@ -94,7 +94,7 @@ for it in range(11, 20000):
             x_enc[j*25:(j+1)*25] = encoder.encode(s)
         y_enc = encoder.encode(y)
 
-        y_hat_enc = tdnn(x_enc)
+        y_hat_enc = 2*tdnn(x_enc)-1
         y_hat = encoder.decode(y_hat_enc)
-        print(f'{it},{y},{y_hat},{training_loss},{noise_level}')
+        print(f'{it},{y},{y_hat},{noise_level},{training_loss}')
         sys.stdout.flush()
