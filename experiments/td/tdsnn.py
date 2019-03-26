@@ -3,7 +3,6 @@ import pickle
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
 from bindsnet.conversion import ann_to_snn
 from bindsnet.network.monitors import Monitor
 
@@ -23,8 +22,8 @@ class TDNN(nn.Module):
 
     def forward(self, x):
         x = torch.sigmoid(self.fc1(x))
-        x = self.fc2(x)
-        return x
+        x = torch.sigmoid(self.fc2(x))
+        return x 
 
 class Encoder():
     def __init__(self):
@@ -52,10 +51,11 @@ class Encoder():
 
 def add_noise(stream):
     ret = list(stream)
+    subs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     for i in range(len(ret)):
         u = torch.rand(1)
         if u < noise_level:
-            ret[i] = stream[int(torch.randint(0, len(stream), (1, )))]
+            ret[i] = subs[int(torch.randint(0, len(subs), (1, )))]
     return ret
 
 tdnn = TDNN()
@@ -67,7 +67,7 @@ encoder.precode(original_stream)
 stream = add_noise(original_stream)
 
 runtime = 500
-print('it,target,tdnn_prediction,tdsnn_prediction,training_loss,noise_level')
+print('it,target,tdnn_prediction,tdsnn_prediction,noise_level,training_loss,tdnn_loss,tdsnn_loss,conversion_loss')
 for it in range(11, 20000):
     training_loss = 0
     if it > 1000:
@@ -79,7 +79,7 @@ for it in range(11, 20000):
                 x_enc = torch.zeros(10*25)
                 for j, s in enumerate(x):
                     x_enc[j*25:(j+1)*25] = encoder.encode(s)
-                y_enc = encoder.encode(y)
+                y_enc = 0.5*encoder.encode(y)+0.5
 
                 y_hat = tdnn(x_enc)
                 optimizer.zero_grad()
@@ -102,11 +102,16 @@ for it in range(11, 20000):
         snn.run({'Input': x_enc.repeat(runtime, 1)}, time=runtime)
 
         tdnn_output = tdnn(x_enc)
-        tdnn_prediction = encoder.decode(tdnn_output)
+        tdnn_prediction = encoder.decode(2*tdnn_output-1)
 
         output_spikes = snn.monitors['output_monitor'].get('s')
-        tdsnn_output = (torch.sum(output_spikes, dim=1).float() / (runtime*0.9)) - 0.35
-        tdsnn_prediction = encoder.decode(tdsnn_output)
+        tdsnn_output = torch.sum(output_spikes, dim=1).float() / runtime
+        tdsnn_prediction = encoder.decode(2*tdsnn_output - 1)
 
-        print(f'{it},{y},{tdnn_prediction},{tdsnn_prediction},{training_loss},{noise_level}')
+
+        tdnn_loss = torch.sum(torch.pow((0.5*y_enc+0.5) - tdnn_output, 2)).float()
+        tdsnn_loss = torch.sum(torch.pow((0.5*y_enc+0.5) - tdsnn_output, 2)).float()
+        conversion_loss = torch.sum(torch.pow(tdnn_output - tdsnn_output, 2)).float()
+
+        print(f'{it},{y},{tdnn_prediction},{tdsnn_prediction},{noise_level},{training_loss},{tdnn_loss},{tdsnn_loss},{conversion_loss}')
         sys.stdout.flush()
