@@ -108,7 +108,6 @@ for it in range(11, 20000):
         tdsnn_output = torch.sum(output_spikes, dim=1).float() / runtime
         tdsnn_prediction = encoder.decode(2*tdsnn_output - 1)
 
-
         tdnn_loss = torch.sum(torch.pow((0.5*y_enc+0.5) - tdnn_output, 2)).float()
         tdsnn_loss = torch.sum(torch.pow((0.5*y_enc+0.5) - tdsnn_output, 2)).float()
         conversion_loss = torch.sum(torch.pow(tdnn_output - tdsnn_output, 2)).float()
