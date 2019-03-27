@@ -67,7 +67,7 @@ encoder.precode(original_stream)
 stream = add_noise(original_stream)
 
 runtime = 500
-print('it,target,tdnn_prediction,tdsnn_prediction,noise_level,training_loss,tdnn_loss,tdsnn_loss,conversion_loss')
+print('it,target,tdnn_prediction,tdnsnn_prediction,noise_level,training_loss,tdnn_loss,tdnsnn_loss,conversion_loss')
 for it in range(11, 20000):
     training_loss = 0
     if it > 1000:

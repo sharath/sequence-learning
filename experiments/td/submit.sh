@@ -1,3 +1,8 @@
+sbatch -p 1080ti-long --gres=gpu:1 run2.sh
+sbatch -p 1080ti-long --gres=gpu:1 run2.sh
+sbatch -p 1080ti-long --gres=gpu:1 run2.sh
+sbatch -p 1080ti-long --gres=gpu:1 run2.sh
+sbatch -p 1080ti-long --gres=gpu:1 run2.sh
 sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.00
 sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.01
 sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.02
