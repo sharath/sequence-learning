@@ -61,7 +61,7 @@ criterion = nn.MSELoss()
 optimizer = optim.SGD(tdnn.parameters(), lr=0.01)
 original_stream = pickle.load(open('dataset.pkl', 'rb'))['noisy']
 encoder = Encoder()
-encoder.precode(original_stream)
+encoder.precode([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 stream = add_noise(original_stream)
 
 print('it,target,tdnn_prediction,noise_level,training_loss')
@@ -69,7 +69,7 @@ for it in range(11, 20000):
     training_loss = 0
     if it > 1000:
         for epoch in range(1):
-            for i in range(0, it-11):
+            for i in range(max(0, it-1000), it-11):
                 x = stream[i:i+10]
                 y = stream[i+10]
             

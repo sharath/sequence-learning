@@ -63,22 +63,25 @@ criterion = nn.MSELoss()
 optimizer = optim.SGD(tdnn.parameters(), lr=0.01)
 original_stream = pickle.load(open('dataset.pkl', 'rb'))['noisy']
 encoder = Encoder()
-encoder.precode(original_stream)
+encoder.precode([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 stream = add_noise(original_stream)
 
 runtime = 500
 print('it,target,tdnn_prediction,tdsnn_prediction,noise_level,training_loss,tdnn_loss,tdsnn_loss,conversion_loss')
 for it in range(11, 20000):
     training_loss = 0
+
+    dataset = torch.zeros((989, 250))
     if it > 1000:
         for epoch in range(1):
-            for i in range(0, it-11):
+            for i in range(max(0, it-1000), it-11):
                 x = stream[i:i+10]
                 y = stream[i+10]
             
                 x_enc = torch.zeros(10*25)
                 for j, s in enumerate(x):
                     x_enc[j*25:(j+1)*25] = encoder.encode(s)
+                    dataset[i - max(0, it-1000)][j*25:(j+1)*25] = x_enc[j*25:(j+1)*25]
                 y_enc = 0.5*encoder.encode(y)+0.5
 
                 y_hat = tdnn(x_enc)
@@ -97,7 +100,7 @@ for it in range(11, 20000):
             x_enc[j*25:(j+1)*25] = encoder.encode(s)
         y_enc = encoder.encode(y)
 
-        snn = ann_to_snn(tdnn, input_shape=(1, 10*25))
+        snn = ann_to_snn(tdnn, input_shape=(1, 10*25), data=dataset)
         snn.add_monitor(monitor=Monitor(obj=snn.layers['2'], state_vars=['s']), name='output_monitor')
         snn.run({'Input': x_enc.repeat(runtime, 1)}, time=runtime)
 
