@@ -8,6 +8,11 @@ from bindsnet.network.topology import Connection
 from bindsnet.network.monitors import Monitor
 from bindsnet.learning import Hebbian
 
+try: 
+    torch.set_default_tensor_type('torch.cuda.FloatTensor')
+except:
+    pass
+
 def moving_average(a, n=100):
     moving_average = []
     for i in range(len(a)):
@@ -40,7 +45,6 @@ class Encoder():
     def precode(self, stream):
         for i in stream:
             self.encode(i)
-            
             
 class KNNClassifier:
     def __init__(self, k=1):
