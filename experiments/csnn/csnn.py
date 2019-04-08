@@ -87,7 +87,7 @@ class Prototype(Network):
             self.add_layer(LIFNodes(n=self.n_neurons, traces=True), name=f'column_{i+1}')
             self.add_monitor(Monitor(self.layers[f'column_{i+1}'], ['s'], time=self.time), name=f'monitor_{i+1}')
             w = 0.3 * torch.rand(self.encoder.e_size, self.n_neurons)
-            self.add_connection(Connection(source=self.layers[f'input_{i+1}'], target=self.layers[f'column_{i+1}'], update_rule=Hebbian, w=w), source=f'input_{i+1}', target=f'column_{i+1}')
+            self.add_connection(Connection(source=self.layers[f'input_{i+1}'], target=self.layers[f'column_{i+1}'], update_rule=Hebbian, w=w, nu=[0.1, 0.1]), source=f'input_{i+1}', target=f'column_{i+1}')
         
         for i in range(lag):
             for j in range(lag):
