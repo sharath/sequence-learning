@@ -1,3 +1,4 @@
+import os
 import sys
 import torch
 import pickle
@@ -7,6 +8,8 @@ from bindsnet.network.nodes import RealInput, LIFNodes
 from bindsnet.network.topology import Connection
 from bindsnet.network.monitors import Monitor
 from bindsnet.learning import Hebbian
+
+learning = bool(sys.argv[1]) if len(sys.argv) > 1 else True
 
 try: 
     torch.set_default_tensor_type('torch.cuda.FloatTensor')
@@ -73,6 +76,7 @@ class KNNClassifier:
 class Prototype(Network):
     def __init__(self, encoder, dt: float = 1.0, lag: int = 10, n_neurons: int = 100, time: int = 100):
         super().__init__(dt=dt)
+        self.learning = learning
         self.n_neurons = n_neurons
         self.lag = lag
         self.encoder = encoder
@@ -89,6 +93,7 @@ class Prototype(Network):
             for j in range(lag):
                 w = -0.2 * torch.rand(self.n_neurons, self.n_neurons)
                 self.add_connection(Connection(source=self.layers[f'column_{i+1}'], target=self.layers[f'column_{j+1}'], w=w), source=f'column_{i+1}', target=f'column_{j+1}')      
+                
     def run(self, inpts, **kwargs) -> None:
         inpts = {k:self.encoder.encode(v).repeat(self.time, 1) for k, v in inpts.items()}
         super().run(inpts, self.time, **kwargs)
