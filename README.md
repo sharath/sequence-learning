@@ -9,8 +9,11 @@ Adapted from *Continuous Online Sequence Learning with an Unsupervised Neural Ne
 
 ![LSTM](diagrams/lstm.png)
 
-## Hierarchical Temporal Memory(HTM)
+## Columnar Spiking Neural Network (CSNN)
 
+![CSNN](diagrams/csnn.png)
+
+## Hierarchical Temporal Memory(HTM)
 
 ## Results
 
