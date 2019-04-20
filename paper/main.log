@@ -1,0 +1,600 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.3.15)  20 APR 2019 17:36
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**/Users/sharath/sequence-learning/paper/main.tex
+(/Users/sharath/sequence-learning/paper/main.tex
+LaTeX2e <2018-04-01> patch level 2
+Babel <3.18> and hyphenation patterns for 22 language(s) loaded.
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2018/04/06 v1.3b Input encoding file
+\inpenc@prehook=\toks14
+\inpenc@posthook=\toks15
+)
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2018/02/14 3.18 The Babel package
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/babel/switch.def
+File: switch.def 2018/02/14 3.18 Babel switching mechanism
+)
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/babel-english/english.ldf
+Language: english 2017/06/06 v3.3r English support from the babel system
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/babel/babel.def
+File: babel.def 2018/02/14 3.18 Babel common definitions
+\babel@savecnt=\count88
+\U@D=\dimen103
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/babel/txtbabel.def)
+\bbl@dirlevel=\count89
+)
+\l@canadian = a dialect from \language\l@american 
+\l@australian = a dialect from \language\l@british 
+\l@newzealand = a dialect from \language\l@british 
+))
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks16
+)
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 99.
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen104
+\Gin@req@width=\dimen105
+)
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/biblatex/biblatex.sty
+Package: biblatex 2018/11/02 v3.12 programmable bibliographies (PK/MW)
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2018/01/30 v0.27 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
+)
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
+)
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2017/03/15 v3.2 Provides the ifpdf switch
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2018/02/11 v2.5e e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count90
+)
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/logreq/logreq.sty
+Package: logreq 2010/08/04 v1.0 xml request logger
+\lrq@indent=\count91
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/logreq/logreq.def
+File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
+))
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+)
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip10
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+\c@tabx@nest=\count92
+\c@listtotal=\count93
+\c@listcount=\count94
+\c@liststart=\count95
+\c@liststop=\count96
+\c@citecount=\count97
+\c@citetotal=\count98
+\c@multicitecount=\count99
+\c@multicitetotal=\count100
+\c@instcount=\count101
+\c@maxnames=\count102
+\c@minnames=\count103
+\c@maxitems=\count104
+\c@minitems=\count105
+\c@citecounter=\count106
+\c@maxcitecounter=\count107
+\c@savedcitecounter=\count108
+\c@uniquelist=\count109
+\c@uniquename=\count110
+\c@refsection=\count111
+\c@refsegment=\count112
+\c@maxextratitle=\count113
+\c@maxextratitleyear=\count114
+\c@maxextraname=\count115
+\c@maxextradate=\count116
+\c@maxextraalpha=\count117
+\c@abbrvpenalty=\count118
+\c@highnamepenalty=\count119
+\c@lownamepenalty=\count120
+\c@maxparens=\count121
+\c@parenlevel=\count122
+\blx@tempcnta=\count123
+\blx@tempcntb=\count124
+\blx@tempcntc=\count125
+\blx@maxsection=\count126
+\blx@maxsegment@0=\count127
+\blx@notetype=\count128
+\blx@parenlevel@text=\count129
+\blx@parenlevel@foot=\count130
+\blx@sectionciteorder@0=\count131
+\blx@entrysetcounter=\count132
+\labelnumberwidth=\skip43
+\labelalphawidth=\skip44
+\biblabelsep=\skip45
+\bibitemsep=\skip46
+\bibnamesep=\skip47
+\bibinitsep=\skip48
+\bibparsep=\skip49
+\bibhang=\skip50
+\blx@bcfin=\read1
+\blx@bcfout=\write3
+\c@mincomprange=\count133
+\c@maxcomprange=\count134
+\c@mincompwidth=\count135
+Package biblatex Info: Trying to load biblatex default data model...
+Package biblatex Info: ... file 'blx-dm.def' found.
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/biblatex/blx-dm.def
+File: blx-dm.def 2018/11/02 v3.12 biblatex localization (PK/MW)
+)
+Package biblatex Info: Trying to load biblatex custom data model...
+Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
+\c@afterword=\count136
+\c@savedafterword=\count137
+\c@annotator=\count138
+\c@savedannotator=\count139
+\c@author=\count140
+\c@savedauthor=\count141
+\c@bookauthor=\count142
+\c@savedbookauthor=\count143
+\c@commentator=\count144
+\c@savedcommentator=\count145
+\c@editor=\count146
+\c@savededitor=\count147
+\c@editora=\count148
+\c@savededitora=\count149
+\c@editorb=\count150
+\c@savededitorb=\count151
+\c@editorc=\count152
+\c@savededitorc=\count153
+\c@foreword=\count154
+\c@savedforeword=\count155
+\c@holder=\count156
+\c@savedholder=\count157
+\c@introduction=\count158
+\c@savedintroduction=\count159
+\c@namea=\count160
+\c@savednamea=\count161
+\c@nameb=\count162
+\c@savednameb=\count163
+\c@namec=\count164
+\c@savednamec=\count165
+\c@translator=\count166
+\c@savedtranslator=\count167
+\c@shortauthor=\count168
+\c@savedshortauthor=\count169
+\c@shorteditor=\count170
+\c@savedshorteditor=\count171
+\c@labelname=\count172
+\c@savedlabelname=\count173
+\c@institution=\count174
+\c@savedinstitution=\count175
+\c@lista=\count176
+\c@savedlista=\count177
+\c@listb=\count178
+\c@savedlistb=\count179
+\c@listc=\count180
+\c@savedlistc=\count181
+\c@listd=\count182
+\c@savedlistd=\count183
+\c@liste=\count184
+\c@savedliste=\count185
+\c@listf=\count186
+\c@savedlistf=\count187
+\c@location=\count188
+\c@savedlocation=\count189
+\c@organization=\count190
+\c@savedorganization=\count191
+\c@origlocation=\count192
+\c@savedoriglocation=\count193
+\c@origpublisher=\count194
+\c@savedorigpublisher=\count195
+\c@publisher=\count196
+\c@savedpublisher=\count197
+\c@language=\count198
+\c@savedlanguage=\count199
+\c@origlanguage=\count266
+\c@savedoriglanguage=\count267
+\c@pageref=\count268
+\c@savedpageref=\count269
+\shorthandwidth=\skip51
+\shortjournalwidth=\skip52
+\shortserieswidth=\skip53
+\shorttitlewidth=\skip54
+\shortauthorwidth=\skip55
+\shorteditorwidth=\skip56
+\locallabelnumberwidth=\skip57
+\locallabelalphawidth=\skip58
+\localshorthandwidth=\skip59
+\localshortjournalwidth=\skip60
+\localshortserieswidth=\skip61
+\localshorttitlewidth=\skip62
+\localshortauthorwidth=\skip63
+\localshorteditorwidth=\skip64
+Package biblatex Info: Trying to load compatibility code...
+Package biblatex Info: ... file 'blx-compat.def' found.
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/biblatex/blx-compat.def
+File: blx-compat.def 2018/11/02 v3.12 biblatex compatibility (PK/MW)
+)
+Package biblatex Info: Trying to load generic definitions...
+Package biblatex Info: ... file 'biblatex.def' found.
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/biblatex/biblatex.def
+File: biblatex.def 2018/11/02 v3.12 biblatex compatibility (PK/MW)
+\c@textcitecount=\count270
+\c@textcitetotal=\count271
+\c@textcitemaxnames=\count272
+\c@biburlnumpenalty=\count273
+\c@biburlucpenalty=\count274
+\c@biburllcpenalty=\count275
+\c@smartand=\count276
+)
+Package biblatex Info: Trying to load bibliography style 'numeric'...
+Package biblatex Info: ... file 'numeric.bbx' found.
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/biblatex/bbx/numeric.bbx
+File: numeric.bbx 2018/11/02 v3.12 biblatex bibliography style (PK/MW)
+Package biblatex Info: Trying to load bibliography style 'standard'...
+Package biblatex Info: ... file 'standard.bbx' found.
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/biblatex/bbx/standard.bbx
+File: standard.bbx 2018/11/02 v3.12 biblatex bibliography style (PK/MW)
+\c@bbx:relatedcount=\count277
+\c@bbx:relatedtotal=\count278
+))
+Package biblatex Info: Trying to load citation style 'numeric'...
+Package biblatex Info: ... file 'numeric.cbx' found.
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/biblatex/cbx/numeric.cbx
+File: numeric.cbx 2018/11/02 v3.12 biblatex citation style (PK/MW)
+Package biblatex Info: Redefining '\cite'.
+Package biblatex Info: Redefining '\parencite'.
+Package biblatex Info: Redefining '\footcite'.
+Package biblatex Info: Redefining '\footcitetext'.
+Package biblatex Info: Redefining '\smartcite'.
+Package biblatex Info: Redefining '\supercite'.
+Package biblatex Info: Redefining '\textcite'.
+Package biblatex Info: Redefining '\textcites'.
+Package biblatex Info: Redefining '\cites'.
+Package biblatex Info: Redefining '\parencites'.
+Package biblatex Info: Redefining '\smartcites'.
+)
+Package biblatex Info: Trying to load configuration file...
+Package biblatex Info: ... file 'biblatex.cfg' found.
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/biblatex/biblatex.cfg
+File: biblatex.cfg 
+))
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2018/03/24 v5.7 Page Geometry
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+)
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+\Gm@cnth=\count279
+\Gm@cntv=\count280
+\c@Gm@tempcnt=\count281
+\Gm@bindingoffset=\dimen106
+\Gm@wd@mp=\dimen107
+\Gm@odd@mp=\dimen108
+\Gm@even@mp=\dimen109
+\Gm@layoutwidth=\dimen110
+\Gm@layoutheight=\dimen111
+\Gm@layouthoffset=\dimen112
+\Gm@layoutvoffset=\dimen113
+\Gm@dimlist=\toks17
+)
+Package biblatex Info: Trying to load language 'english'...
+Package biblatex Info: ... file 'english.lbx' found.
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/biblatex/lbx/english.lbx
+File: english.lbx 2018/11/02 v3.12 biblatex localization (PK/MW)
+)
+
+Package biblatex Warning: 'babel/polyglossia' detected but 'csquotes' missing.
+(biblatex)                Loading 'csquotes' recommended.
+
+\@quotelevel=\count282
+\@quotereset=\count283
+(./main.aux
+
+LaTeX Warning: Label `fig:lstm-online-model' multiply defined.
+
+)
+\openout1 = `main.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+ (/usr/local/texlive/2018basic/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count284
+\scratchdimen=\dimen114
+\scratchbox=\box26
+\nofMPsegments=\count285
+\nofMParguments=\count286
+\everyMPshowfont=\toks18
+\MPscratchCnt=\count287
+\MPscratchDim=\dimen115
+\MPnumerator=\count288
+\makeMPintoPDFobject=\count289
+\everyMPtoPDFconversion=\toks19
+) (/usr/local/texlive/2018basic/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
+))
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 456.
+
+(/usr/local/texlive/2018basic/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+Package biblatex Info: Input encoding 'utf8' detected.
+Package biblatex Info: Automatic encoding selection.
+(biblatex)             Assuming data encoding 'utf8'.
+\openout3 = `main.bcf'.
+
+Package biblatex Info: Trying to load bibliographic data...
+Package biblatex Info: ... file 'main.bbl' not found.
+
+No file main.bbl.
+Package biblatex Info: Reference section=0 on input line 14.
+Package biblatex Info: Reference segment=0 on input line 14.
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: <default>
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(90.3375pt, 433.62001pt, 90.3375pt)
+* v-part:(T,H,B)=(90.3375pt, 614.295pt, 90.3375pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=433.62001pt
+* \textheight=614.295pt
+* \oddsidemargin=18.0675pt
+* \evensidemargin=18.0675pt
+* \topmargin=-18.9325pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=65.0pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 15.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 15.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 15.
+
+LaTeX Warning: Citation 'cui2016continuous' on page 1 undefined on input line 2
+7.
+
+
+LaTeX Warning: Citation 'gerstner2002spiking' on page 1 undefined on input line
+ 27.
+
+
+LaTeX Warning: Citation 'maass1997networks' on page 1 undefined on input line 2
+7.
+
+
+LaTeX Warning: Citation 'cruz2012energy' on page 1 undefined on input line 27.
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 33.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 33.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<matrix-distances.png, id=1, 779.43195pt x 720.89325pt>
+File: matrix-distances.png Graphic file (type png)
+<use matrix-distances.png>
+Package pdftex.def Info: matrix-distances.png  used on input line 67.
+(pdftex.def)             Requested size: 303.53267pt x 280.74023pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: Citation 'mikolov2013distributed' on page 1 undefined on input l
+ine 74.
+
+[1
+
+{/usr/local/texlive/2018basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+[2 <./matrix-distances.png>]
+
+LaTeX Warning: Citation 'hochreiter1997long' on page 3 undefined on input line 
+81.
+
+
+LaTeX Warning: Citation 'mozer1995focused' on page 3 undefined on input line 81
+.
+
+<lstm.png, id=21, 634.5306pt x 540.94095pt>
+File: lstm.png Graphic file (type png)
+<use lstm.png>
+Package pdftex.def Info: lstm.png  used on input line 85.
+(pdftex.def)             Requested size: 325.215pt x 277.25465pt.
+
+LaTeX Warning: Citation 'waibel1995phoneme' on page 3 undefined on input line 9
+2.
+
+
+LaTeX Warning: Citation 'rojas1996backpropagation' on page 3 undefined on input
+ line 92.
+
+[3 <./lstm.png>]
+<tdnn.png, id=26, 650.06865pt x 560.45386pt>
+File: tdnn.png Graphic file (type png)
+<use tdnn.png>
+Package pdftex.def Info: tdnn.png  used on input line 97.
+(pdftex.def)             Requested size: 325.215pt x 280.38017pt.
+
+
+LaTeX Warning: Citation 'diehl2015fast' on page 4 undefined on input line 104.
+
+
+LaTeX Warning: Citation 'beliaev2007time' on page 4 undefined on input line 115
+.
+
+<csnn.png, id=27, 640.3122pt x 516.0078pt>
+File: csnn.png Graphic file (type png)
+<use csnn.png>
+Package pdftex.def Info: csnn.png  used on input line 119.
+(pdftex.def)             Requested size: 303.53267pt x 244.61807pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[4 <./tdnn.png>]
+<prediction-accuracy.png, id=32, 1187.75745pt x 606.70665pt>
+File: prediction-accuracy.png Graphic file (type png)
+<use prediction-accuracy.png>
+Package pdftex.def Info: prediction-accuracy.png  used on input line 132.
+(pdftex.def)             Requested size: 390.25536pt x 199.33434pt.
+ [5 <./csnn.png> <./prediction-accuracy.png>] [6]
+
+LaTeX Warning: Empty bibliography on input line 148.
+
+(./main.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: There were multiply-defined labels.
+
+
+Package biblatex Warning: Please (re)run Biber on the file:
+(biblatex)                main
+(biblatex)                and rerun LaTeX afterwards.
+
+Package logreq Info: Writing requests to 'main.run.xml'.
+\openout1 = `main.run.xml'.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 9081 strings out of 494091
+ 160395 string characters out of 6163523
+ 595221 words of memory out of 5000000
+ 12675 multiletter control sequences out of 15000+600000
+ 8502 words of font info for 30 fonts, out of 8000000 for 9000
+ 319 hyphenation exceptions out of 8191
+ 35i,14n,39p,1201b,1594s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2018basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx1
+0.pfb></usr/local/texlive/2018basic/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mbx12.pfb></usr/local/texlive/2018basic/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmbx9.pfb></usr/local/texlive/2018basic/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmmi10.pfb></usr/local/texlive/2018basic/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmr10.pfb></usr/local/texlive/2018basic/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmr12.pfb></usr/local/texlive/2018basic/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmr17.pfb></usr/local/texlive/2018basic/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2018basic/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmsy10.pfb>
+Output written on main.pdf (6 pages, 2746961 bytes).
+PDF statistics:
+ 70 PDF objects out of 1000 (max. 8388607)
+ 42 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
+
