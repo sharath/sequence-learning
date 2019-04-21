@@ -113,7 +113,7 @@ def main(args):
     tdnn_accuracy = []
     tdsnn_accuracy = []
 
-    print('it,tdnn_accuracy,tdsnn_prediction,tdnn_loss,tdsnn_loss,conversion_loss')
+    print('it,tdnn_accuracy,tdsnn_accuracy,tdnn_loss,tdsnn_loss,conversion_loss')
     for it in range(11, 20000):
         dataset = torch.zeros((989, 250))
 

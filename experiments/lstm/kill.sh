@@ -1,1 +1,0 @@
-pkill -f 'python -W ignore lstm-online.py'
