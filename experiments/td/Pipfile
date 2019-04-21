@@ -7,7 +7,7 @@ verify_ssl = true
 
 [packages]
 torch = "*"
-bindsnet = {git = "https://github.com/Hananel-Hazan/bindsnet.git",ref = "sharath"}
+bindsnet = {git = "https://github.com/Hananel-Hazan/bindsnet.git",ref = "master"}
 
 [requires]
 python_version = "3.7"

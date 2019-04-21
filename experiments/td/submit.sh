@@ -1,29 +1,5 @@
-sbatch -p 1080ti-long --gres=gpu:1 run2.sh
-sbatch -p 1080ti-long --gres=gpu:1 run2.sh
-sbatch -p 1080ti-long --gres=gpu:1 run2.sh
-sbatch -p 1080ti-long --gres=gpu:1 run2.sh
-sbatch -p 1080ti-long --gres=gpu:1 run2.sh
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.00
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.00
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.00
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.00
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.00
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.01
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.02
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.03
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.04
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.05
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.06
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.07
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.08
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.09
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.10
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.12
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.13
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.14
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.15
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.16
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.17
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.18
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.19
-sbatch -p 1080ti-long --gres=gpu:1 run.sh 0.20
+for ((i = 1; i <= 30; i++))
+do
+    sbatch -p 1080ti-long --gres=gpu:1 run.sh $i
+    sbatch -p 1080ti-long --gres=gpu:1 run.sh $i
+done
