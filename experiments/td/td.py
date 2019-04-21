@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+import sys
 import pickle
 import numpy as np
 import torch
@@ -161,6 +162,7 @@ def main(args):
             tdsnn_moving = np.mean(tdsnn_accuracy[max(0, len(tdsnn_accuracy) - 101):len(tdsnn_accuracy)])
 
             print(f'{it},{tdnn_moving},{tdsnn_moving},{tdnn_loss},{tdsnn_loss},{conversion_loss}')
+            sys.stdout.flush()
 
 
 if __name__ == '__main__':
