@@ -82,6 +82,7 @@ def main(args):
     lstm_accuracy = []
     print('it,lstm_accuracy,lstm_loss')
     for it in range(11, 20000):
+        lstm.hidden = (torch.zeros(1, 1, 20), torch.zeros(1, 1, 20))
         for i in range(max(0, it-1000), it-1):
             x = stream[i]
             y = stream[i+1]
