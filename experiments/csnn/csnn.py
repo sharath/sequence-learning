@@ -3,18 +3,15 @@ import sys
 import torch
 import pickle
 import numpy as np
+from argparse import ArgumentParser
 from bindsnet.network import Network
 from bindsnet.network.nodes import RealInput, LIFNodes
 from bindsnet.network.topology import Connection
 from bindsnet.network.monitors import Monitor
 from bindsnet.learning import Hebbian
 
-learning = bool(sys.argv[1]) if len(sys.argv) > 1 else True
+args = None
 
-try: 
-    torch.set_default_tensor_type('torch.cuda.FloatTensor')
-except:
-    pass
 
 def moving_average(a, n=100):
     moving_average = []
@@ -24,6 +21,7 @@ def moving_average(a, n=100):
         moving_average.append(np.sum(values) / float(len(values)))
     return np.array(moving_average)
 
+
 class Encoder():
     def __init__(self, e_size=25):
         self.encodings = {}
@@ -32,7 +30,7 @@ class Encoder():
     def encode(self, x):
         if x in self.encodings:
             return self.encodings[x]
-        self.encodings[x] = torch.rand(e_size)
+        self.encodings[x] = torch.rand(self.e_size)
         return self.encodings[x]
 
     def decode(self, v):
@@ -44,17 +42,20 @@ class Encoder():
                 best = dist
                 nearest = x
         return nearest
-    
+
     def precode(self, stream):
         for i in stream:
             self.encode(i)
-            
+
+
 class KNNClassifier:
     def __init__(self, k=1):
         self.k = k
         self.data = []
+
     def add_sample(self, sample, label):
         self.data.append((sample, label))
+
     def classify(self, new_sample):
         distances = [(None, float('inf'))]*self.k
         for sample, label in self.data:
@@ -71,61 +72,86 @@ class KNNClassifier:
         counts = list(counts.items())
         counts.sort(key=lambda x: x[1])
         return counts[0][0]
-    
-    
+
+
 class Prototype(Network):
-    def __init__(self, encoder, dt: float = 1.0, lag: int = 10, n_neurons: int = 100, time: int = 100):
+    def __init__(self, encoder, dt: float = 1.0, lag: int = 10, n_neurons: int = 100, time: int = 100, learning: bool = False):
         super().__init__(dt=dt)
         self.learning = learning
         self.n_neurons = n_neurons
         self.lag = lag
         self.encoder = encoder
         self.time = time
-        
+
         for i in range(lag):
-            self.add_layer(RealInput(n=encoder.e_size, traces=True), name=f'input_{i+1}')
-            self.add_layer(LIFNodes(n=self.n_neurons, traces=True), name=f'column_{i+1}')
-            self.add_monitor(Monitor(self.layers[f'column_{i+1}'], ['s'], time=self.time), name=f'monitor_{i+1}')
-            w = 0.3 * torch.rand(self.encoder.e_size, self.n_neurons)
-            self.add_connection(Connection(source=self.layers[f'input_{i+1}'], target=self.layers[f'column_{i+1}'], update_rule=Hebbian, w=w, nu=[0.1, 0.1]), source=f'input_{i+1}', target=f'column_{i+1}')
-        
+            self.add_layer(RealInput(n=encoder.e_size,
+                                     traces=True), name=f'input_{i+1}')
+            self.add_layer(LIFNodes(n=self.n_neurons,
+                                    traces=True), name=f'column_{i+1}')
+            self.add_monitor(Monitor(
+                self.layers[f'column_{i+1}'], ['s'], time=self.time), name=f'monitor_{i+1}')
+            w = 0.3*torch.rand(self.encoder.e_size, self.n_neurons)
+            self.add_connection(Connection(source=self.layers[f'input_{i+1}'], target=self.layers[f'column_{i+1}'], w=w), source=f'input_{i+1}', target=f'column_{i+1}')
+
         for i in range(lag):
             for j in range(lag):
-                w = -0.2 * torch.rand(self.n_neurons, self.n_neurons)
-                self.add_connection(Connection(source=self.layers[f'column_{i+1}'], target=self.layers[f'column_{j+1}'], w=w), source=f'column_{i+1}', target=f'column_{j+1}')      
-                
+                w = torch.zeros(self.n_neurons, self.n_neurons)
+                self.add_connection(Connection(source=self.layers[f'column_{i+1}'], target=self.layers[f'column_{j+1}'], w=w, update_rule=Hebbian, nu=[0.1, 0.1]), source=f'column_{i+1}', target=f'column_{j+1}')
+
     def run(self, inpts, **kwargs) -> None:
-        inpts = {k:self.encoder.encode(v).repeat(self.time, 1) for k, v in inpts.items()}
+        inpts = {k: self.encoder.encode(v).repeat(
+            self.time, 1) for k, v in inpts.items()}
         super().run(inpts, self.time, **kwargs)
 
-e_size = 25
-lag = 10
-n_neurons = 100
-runtime = 100
 
-stream = pickle.load(open('dataset.pkl', 'rb'))['noisy']
-encoder = Encoder(e_size)
-encoder.precode([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+def main():
+    stream = pickle.load(open('dataset.pkl', 'rb'))['clean' if args.clean else 'noisy']
+    encoder = Encoder(args.e_size)
+    encoder.precode([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
-net = Prototype(encoder, lag=lag, time=runtime, n_neurons=n_neurons)
-classifier = KNNClassifier()
-correct = []
+    net = Prototype(encoder, lag=args.lag, time=args.runtime, n_neurons=args.n_neurons, learning=args.learning)
+    classifier = KNNClassifier()
+    correct = []
 
-print('it,target,csnn_prediction,accuracy')
-for cur in range(10, len(stream)):
-    inpt = {f'input_{i+1}': stream[cur+i-10] for i in range(lag)}
-    target = stream[cur]
-    net.reset_()
-    net.run(inpt)
+    print('it,target,csnn_prediction,accuracy')
+    for cur in range(10, len(stream)):
+        inpt = {f'input_{i+1}': stream[cur+i-10] for i in range(args.lag)}
+        target = stream[cur]
+        net.reset_()
+        net.run(inpt)
     
-    readout = torch.zeros(lag, runtime*n_neurons)
-    for i in range(lag):
-        readout[i] = net.monitors[f'monitor_{i+1}'].get('s').view(-1)
-    prediction = classifier.classify(readout)
-    
-    if stream[cur+1] >= 10:
-        correct.append(int(prediction == target))
-        print(f'{cur},{target},{prediction},{moving_average(correct)[-1]}')
-        sys.stdout.flush()
+        readout = torch.zeros(args.lag, args.n_neurons)
+        for i in range(args.lag):
+            readout[i] = net.monitors[f'monitor_{i+1}'].get('s').sum(1)
+        prediction = classifier.classify(readout)
+
+        if stream[cur+1] >= 10:
+            correct.append(int(prediction == target))
+            print(f'{cur},{target},{prediction},{moving_average(correct)[-1]}')
+            sys.stdout.flush()
         
-    classifier.add_sample(readout, target)
+        classifier.add_sample(readout, target)
+
+
+if __name__ == '__main__':
+    parser = ArgumentParser()
+    parser.add_argument('--e_size', type=int, default=25)
+    parser.add_argument('--n_neurons', type=int, default=100)
+    parser.add_argument('--lag', type=int, default=10)
+    parser.add_argument('--runtime', type=int, default=500)
+    parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--noise_level', type=int, default=0)
+    parser.add_argument('--nu', type=float, default=0)
+    parser.add_argument('--clean', action='store_true', default=False)
+    parser.add_argument('--learning', action='store_true', default=False)
+    args = parser.parse_args()
+
+    print(args)
+
+    torch.manual_seed(args.seed)
+    try:
+        torch.set_default_tensor_type('torch.cuda.FloatTensor')
+    except:
+        pass
+
+    main()
