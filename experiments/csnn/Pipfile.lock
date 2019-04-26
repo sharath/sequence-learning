@@ -1,0 +1,40 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "5433dd8b9b1dfd6ad0aed4eedd15e35956d4babf0a111dcb3c2841cadfeb69aa"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "python_version": "3.7"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "bindsnet": {
+            "git": "https://github.com/Hananel-Hazan/bindsnet.git",
+            "ref": "cc45e290529b39db5050a9798ac849da140c8479"
+        },
+        "torch": {
+            "hashes": [
+                "sha256:2e04bcc8b6536ba01a924cbcfb9eff2428be6c9cc73956df38dfcf63c948fbf5",
+                "sha256:40ad926ebdef6db70811102ae1448584a0c338a2fce2ff718533b9016664398e",
+                "sha256:43e40d9cf70d038fe9a9c06eaadf3f39756fe76a530a0bd1dec9f21654ee5851",
+                "sha256:639e9414cd3a787c807206199bf3285815a41fac9b2e20aca0db9a971db5399e",
+                "sha256:652b70751bbe974370feff27f51b6cd7856c14a57eb06fdd1c9f2dfcc2731401",
+                "sha256:7822918f3d32a99db2bb5616a5c28d989d6e4b6a54d720cb25e60551dacafa1e",
+                "sha256:96fd5e8ffc117f79d1baaa65da601d35411f341d90d8ca1204236925f164b043",
+                "sha256:a002d509e98a3ea17f45affc5c440808d7ac119d7510bb27da7b184aafb59943",
+                "sha256:c8dd2478d3e8c0da293c618be60432bb166fe36c50663e26b1fe9e7123365fe5"
+            ],
+            "index": "pypi",
+            "version": "==1.0.1.post2"
+        }
+    },
+    "develop": {}
+}
