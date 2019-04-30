@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5433dd8b9b1dfd6ad0aed4eedd15e35956d4babf0a111dcb3c2841cadfeb69aa"
+            "sha256": "bf8ab571c3f1afb2122847dd7fb8330ad0d546d18e5b1444a50b7c9f0e0c0852"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -18,7 +18,7 @@
     "default": {
         "bindsnet": {
             "git": "https://github.com/Hananel-Hazan/bindsnet.git",
-            "ref": "cc45e290529b39db5050a9798ac849da140c8479"
+            "ref": "40ee15929d2d6af8ff3f8b21df0e9414a483f985"
         },
         "torch": {
             "hashes": [
