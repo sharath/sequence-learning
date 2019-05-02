@@ -96,7 +96,7 @@ class Prototype(Network):
         for i in range(lag):
             for j in range(lag):
                 w = torch.zeros(self.n_neurons, self.n_neurons)
-                self.add_connection(Connection(source=self.layers[f'column_{i+1}'], target=self.layers[f'column_{j+1}'], w=w, update_rule=Hebbian, nu=[args.nu1, args.nu2]), source=f'column_{i+1}', target=f'column_{j+1}')
+                self.add_connection(Connection(source=self.layers[f'column_{i+1}'], target=self.layers[f'column_{j+1}'], w=w, update_rule=Hebbian, nu=args.nu), source=f'column_{i+1}', target=f'column_{j+1}')
 
     def run(self, inpts, **kwargs) -> None:
         inpts = {k: self.encoder.encode(v).repeat(
@@ -136,13 +136,12 @@ def main():
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--e_size', type=int, default=25)
-    parser.add_argument('--n_neurons', type=int, default=100)
+    parser.add_argument('--n_neurons', type=int, default=500)
     parser.add_argument('--lag', type=int, default=10)
     parser.add_argument('--runtime', type=int, default=250)
     parser.add_argument('--seed', type=int, default=None)
     parser.add_argument('--noise_level', type=int, default=0)
-    parser.add_argument('--nu1', type=float, default=0)
-    parser.add_argument('--nu2', type=float, default=0)
+    parser.add_argument('--nu', type=float, default=0)
     parser.add_argument('--clean', action='store_true', default=False)
     parser.add_argument('--learning', action='store_true', default=False)
     args = parser.parse_args()
