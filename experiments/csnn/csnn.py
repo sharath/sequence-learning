@@ -114,7 +114,7 @@ def main():
     correct = []
 
     print('it,target,csnn_prediction,accuracy')
-    for cur in range(10, len(stream)):
+    for cur in range(10, len(stream)-1):
         inpt = {f'input_{i+1}': stream[cur+i-10] for i in range(args.lag)}
         target = stream[cur]
         net.reset_()
@@ -138,7 +138,7 @@ if __name__ == '__main__':
     parser.add_argument('--e_size', type=int, default=25)
     parser.add_argument('--n_neurons', type=int, default=100)
     parser.add_argument('--lag', type=int, default=10)
-    parser.add_argument('--runtime', type=int, default=500)
+    parser.add_argument('--runtime', type=int, default=100)
     parser.add_argument('--seed', type=int, default=None)
     parser.add_argument('--noise_level', type=int, default=0)
     parser.add_argument('--nu', type=float, default=0)
