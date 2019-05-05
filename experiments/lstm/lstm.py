@@ -121,7 +121,7 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--e_size', type=int, default=25)
     parser.add_argument('--h_size', type=int, default=20)
-    parser.add_argument('--window', type=int, default=1000)
+    parser.add_argument('--window', type=int, default=100)
     parser.add_argument('--seed', type=int, default=None)
     parser.add_argument('--noise_level', type=int, default=0)
     parser.add_argument('--clean', action='store_true', default=False)
