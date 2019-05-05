@@ -108,6 +108,7 @@ def main():
     stream = add_noise(original_stream)
 
     tdnn = TDNN()
+    tdsnn = convert(tdnn, dataset=None)
     criterion = nn.MSELoss()
     optimizer = optim.SGD(tdnn.parameters(), lr=args.nu, momentum=args.momentum)
 
@@ -116,24 +117,26 @@ def main():
 
     print('it,tdnn_accuracy,tdsnn_accuracy,tdnn_loss,tdsnn_loss,conversion_loss')
     for it in range(11, 20000):
-        dataset = torch.zeros((989, 250))
+        if it > 0 and it % 1000 == 0:
+            dataset = torch.zeros((2989, 250))
+            for _ in range(5):
+                for i in range(max(0, it-3000), it-11):
+                    x = stream[i:i+10]
+                    y = stream[i+10]
 
-        if it > 1000:
-            for i in range(max(0, it-1000), it-11):
-                x = stream[i:i+10]
-                y = stream[i+10]
+                    x_enc = torch.zeros(10*25)
+                    for j, s in enumerate(x):
+                        x_enc[j*25:(j+1)*25] = encoder.encode(s)
+                        dataset[i - max(0, it-3000)][j*25:(j+1)
+                                                     * 25] = x_enc[j*25:(j+1)*25]
+                    y_enc = encoder.encode(y)
 
-                x_enc = torch.zeros(10*25)
-                for j, s in enumerate(x):
-                    x_enc[j*25:(j+1)*25] = encoder.encode(s)
-                    dataset[i - max(0, it-1000)][j*25:(j+1)*25] = x_enc[j*25:(j+1)*25]
-                y_enc = encoder.encode(y)
-
-                y_hat = tdnn(x_enc)
-                optimizer.zero_grad()
-                loss = criterion(y_hat, y_enc)
-                loss.backward()
-                optimizer.step()
+                    y_hat = tdnn(x_enc)
+                    optimizer.zero_grad()
+                    loss = criterion(y_hat, y_enc)
+                    loss.backward()
+                    optimizer.step()
+            tdsnn = convert(tdnn, dataset[:100])
 
         if original_stream[it+2] > 10 or original_stream[it+2] == -1:
             x = stream[it-9:it+1]
@@ -147,8 +150,7 @@ def main():
             tdnn_output = tdnn(x_enc)
             tdnn_prediction = encoder.decode(tdnn_output)
             tdnn_loss = torch.pow(torch.sum(torch.pow(y_enc - tdnn_output, 2)), 0.5)
-
-            tdsnn = convert(tdnn, dataset[:100])
+            tdsnn.reset_()
             tdsnn.run({'Input': x_enc.repeat(args.runtime, 1)}, time=args.runtime)
 
             tdsnn_output = snn_output(tdsnn)
@@ -187,4 +189,3 @@ if __name__ == '__main__':
         pass
 
     main()
-
