@@ -125,8 +125,8 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=None)
     parser.add_argument('--noise_level', type=int, default=0)
     parser.add_argument('--clean', action='store_true', default=False)
-    parser.add_argument('--nu', type=float, default=0.05)
-    parser.add_argument('--momentum', type=float, default=0.2)
+    parser.add_argument('--nu', type=float, default=0.01)
+    parser.add_argument('--momentum', type=float, default=0)
     args = parser.parse_args()
 
     print(args)
