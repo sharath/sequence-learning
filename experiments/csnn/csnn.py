@@ -14,12 +14,12 @@ args = None
 
 
 def moving_average(a, n=100):
-    moving_average = []
+    moving = []
     for i in range(len(a)):
         start = max(0, i - n)
         values = a[start:i+1]
-        moving_average.append(np.sum(values) / float(len(values)))
-    return np.array(moving_average)
+        moving.append(np.sum(values) / float(len(values)))
+    return np.array(moving)
 
 
 class Encoder():
