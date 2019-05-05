@@ -22,7 +22,7 @@ def moving_average(a, n=100):
     return np.array(moving)
 
 
-class Encoder():
+class Encoder:
     def __init__(self, e_size=25):
         self.encodings = {}
         self.e_size = e_size
@@ -30,7 +30,7 @@ class Encoder():
     def encode(self, x):
         if x in self.encodings:
             return self.encodings[x]
-        self.encodings[x] = torch.rand(self.e_size)
+        self.encodings[x] = 2 * torch.rand(self.e_size) - 1
         return self.encodings[x]
 
     def decode(self, v):
@@ -104,10 +104,21 @@ class Prototype(Network):
         super().run(inpts, self.time, **kwargs)
 
 
+def add_noise(stream):
+    ret = list(stream)
+    subs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    for i in range(len(ret)):
+        u = torch.rand(1) * 100
+        if u < args.noise_level:
+            ret[i] = subs[int(torch.randint(0, len(subs), (1,)))]
+    return ret
+
+
 def main():
-    stream = pickle.load(open('dataset.pkl', 'rb'))['clean' if args.clean else 'noisy']
-    encoder = Encoder(args.e_size)
+    original_stream = pickle.load(open('dataset.pkl', 'rb'))['clean' if args.clean else 'noisy']
+    encoder = Encoder(e_size=args.e_size)
     encoder.precode([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    stream = add_noise(original_stream)
 
     net = Prototype(encoder, lag=args.lag, time=args.runtime, n_neurons=args.n_neurons, learning=args.learning)
     classifier = KNNClassifier()
@@ -116,7 +127,7 @@ def main():
     print('it,target,csnn_prediction,accuracy')
     for cur in range(10, len(stream)-1):
         inpt = {f'input_{i+1}': stream[cur+i-10] for i in range(args.lag)}
-        target = stream[cur]
+        target = original_stream[cur]
         net.reset_()
         net.run(inpt)
     
@@ -151,7 +162,7 @@ if __name__ == '__main__':
         torch.manual_seed(args.seed)
     try:
         torch.set_default_tensor_type('torch.cuda.FloatTensor')
-    except:
+    except AssertionError:
         pass
 
     main()

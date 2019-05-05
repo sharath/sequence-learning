@@ -32,7 +32,7 @@ class LSTMOnline(nn.Module):
         return x, h
 
 
-class Encoder():
+class Encoder:
     def __init__(self, e_size=25):
         self.encodings = {}
         self.e_size = e_size

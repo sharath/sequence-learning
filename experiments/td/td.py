@@ -24,14 +24,15 @@ class TDNN(nn.Module):
         return x
 
 
-class Encoder():
-    def __init__(self):
+class Encoder:
+    def __init__(self, e_size=25):
         self.encodings = {}
+        self.e_size = e_size
 
     def encode(self, x):
         if x in self.encodings:
             return self.encodings[x]
-        self.encodings[x] = torch.rand(25)*2 - 1
+        self.encodings[x] = 2 * torch.rand(self.e_size) - 1
         return self.encodings[x]
 
     def decode(self, v):
@@ -60,12 +61,12 @@ def add_noise(stream):
 
 
 def moving_average(a, n=100):
-    moving_average = []
+    moving = []
     for i in range(len(a)):
         start = max(0, i - n)
         values = a[start:i+1]
-        moving_average.append(np.sum(values) / float(len(values)))
-    return np.array(moving_average)
+        moving.append(np.sum(values) / float(len(values)))
+    return np.array(moving)
 
 
 def convert(ann, dataset):
@@ -100,15 +101,15 @@ def snn_output(snn):
     return tdsnn_output
 
 
-def main(args):
-    tdnn = TDNN()
-    criterion = nn.MSELoss()
-    optimizer = optim.SGD(tdnn.parameters(), lr=0.01)
+def main():
     original_stream = pickle.load(open('dataset.pkl', 'rb'))['clean' if args.clean else 'noisy']
-
     encoder = Encoder()
     encoder.precode([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
     stream = add_noise(original_stream)
+
+    tdnn = TDNN()
+    criterion = nn.MSELoss()
+    optimizer = optim.SGD(tdnn.parameters(), lr=args.nu, momentum=args.momentum)
 
     tdnn_accuracy = []
     tdsnn_accuracy = []
@@ -168,19 +169,22 @@ def main(args):
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--e_size', type=int, default=25)
     parser.add_argument('--noise_level', type=int, default=0)
     parser.add_argument('--no_negative', action='store_true', default=False)
     parser.add_argument('--clean', action='store_true', default=False)
     parser.add_argument('--runtime', type=int, default=500)
+    parser.add_argument('--nu', type=float, default=0.01)
+    parser.add_argument('--momentum', type=float, default=0)
     args = parser.parse_args()
 
     print(args)
-
-    torch.manual_seed(args.seed)
+    if args.seed is not None:
+        torch.manual_seed(args.seed)
     try:
         torch.set_default_tensor_type('torch.cuda.FloatTensor')
-    except:
+    except AssertionError:
         pass
 
-    main(args)
+    main()
 
