@@ -79,10 +79,10 @@ def main():
     optimizer = optim.SGD(model.parameters(), lr=args.nu, momentum=args.momentum)
 
     correct = []
-    prev = None
+    prev = (torch.zeros(1, 1, args.h_size), torch.zeros(1, 1, args.h_size))
     print('it,target,prediction,accuracy')
     for it in range(len(stream) - 2):
-        hidden = prev
+        hidden = (prev[0].detach(), prev[1].detach())
         stored = False
         for jt in range(max(0, it - args.window), it):
             x = stream[jt]
