@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{graphicx}
+\usepackage{amsmath}
 \usepackage[backend=biber,sorting=none]{biblatex}
 \usepackage[margin=1.25in]{geometry}
 \addbibresource{mybib.tex}
@@ -15,16 +16,16 @@ Advisor: Dr. Robert Kozma\\University of Massachusetts Amherst\\COMPSCI 496: Ind
 \maketitle
 
 \begin{abstract}
-In this study, we explore various neural network models for learning sequences. We also compare the robustness of these network models to randomized temporal noise and propose alternative spiking neural architectures.
+In this study, we explore various neural network models for learning sequences. We propsed alternative dynamic spiking neural architectures and compare the robustness of these network models to randomized temporal noise.
 \end{abstract}
 
 
 \section*{Introduction}
 
-Neural network models are able to achieve superhuman performance on static tasks through recent break through in deep learning. However, the majority of real-world time-series data is often complex and noisy. As a result, we need dynamic models that can adapt to changing data streams to learn and predict in an robust, unsupervised fashion. 
+Neural network models are able to achieve superhuman performance on static tasks through recent breakthroughs in deep learning. However, the majority of real-world time-series data is often complex and noisy. As a result, we need dynamic models that can adapt to changing data streams to learn and predict in an robust, unsupervised fashion. 
 
 \section*{Background}
-There have been some recent studies comparing various models for time-series prediction tasks \cite{cui2016continuous} on discretized data. In this study, we sill replicate their results to establish a baseline and propose unsupervised spiking neural architectures for performing this task. Spiking neurons \cite{gerstner2002spiking} are biologically-inspired models of neurons. Spiking neural networks (SNNs) \cite{maass1997networks} are organized connections between these spiking neurons which have more energy efficient \cite{cruz2012energy} implementations on neuromorphic hardware. 
+There have been some recent studies comparing various models for time-series prediction tasks \cite{cui2016continuous} on discretized data. In this study, we sill replicate their results to establish a baseline and propose unsupervised spiking neural architectures for performing this task. Spiking neurons \cite{gerstner2002spiking} are biologically-inspired models of neurons. Spiking neural networks (SNNs) \cite{maass1997networks} are organized connections between these spiking neurons which have more energy efficient \cite{cruz2012energy} implementations on neuromorphic hardware.
 
 \section*{Methodology}
 
@@ -64,7 +65,7 @@ Cui et al. (2016) propose an artificial dataset of sequences (formed with charac
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.7\linewidth]{matrix-distances.png}
+    \includegraphics[width=\linewidth]{../notebooks/matrix-distances.pdf}
     \caption{Heatmap of squared errors between distributed random encodings for the sequence characters, with $-1$ as the separating bit for ease of visualization.}
     \label{fig:encoding-distance}
 \end{figure}
@@ -82,26 +83,26 @@ Long short-term memory \cite{hochreiter1997long} networks are able to achieve st
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.75\linewidth]{lstm.png}
+    \includegraphics[width=\linewidth]{../diagrams/lstm.png}
     \caption{The network architecture for the LSTM-online model. The LSTM cells maintain an internal hidden state.}
     \label{fig:lstm-online-model}
 \end{figure}
 
 \subsection*{Time-delay neural networks (TDNN)}
 
-Time-delay neural networks (TDNN) are feed-forward neural networks trained using a lag on a window of previous data. \cite{waibel1995phoneme} For this task, the TDNN is trained on the last $1000$ characters using a lag of $10$ using backpropagation. \cite{rojas1996backpropagation} Again, using the model proposed by Cui et al. (2016), the first layer has $250$ input neurons that are fully connected to a hidden layer of $200$ neurons. The hidden layers utilize a sigmoid non-linearity and are then fully connected to $25$ output neurons. As with the LSTM model, the output is classified using the nearest neighbor decoder.
+Time-delay neural networks (TDNN) are feed-forward neural networks trained using a lag on a window of previous data. \cite{waibel1995phoneme} For this task, the TDNN is trained on the last $1000$ characters using a lag of $10$ using backpropagation. \cite{rojas1996backpropagation} The model has $250$ input neurons that are fully connected to a hidden layer of $200$ neurons. The hidden layers utilize a ReLu non-linearity and are fully connected to $25$ output neurons. This model proposed by Cui et al. have a sigmoid non-linearity in the hidden layer. We replaced the non-linearity to allow for conversion into a spiking neural network. As with the LSTM model, the output is classified using the nearest neighbor decoder.
 
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.75\linewidth]{tdnn.png}
+    \includegraphics[width=\linewidth]{../diagrams/tdnn.png}
     \caption{The network architecture for the TDNN/TDSNN model.}
     \label{fig:lstm-online-model}
 \end{figure}
 
 \subsection*{Time-delay spiking neural network (TDSNN)}
 
-A common approach to training spiking neural networks \cite{diehl2015fast} is through the transfer of weights learned through backpropagation on an identical non-spiking neural network and then scaling the weights. Using this approach, we can convert the TDNN model trained with a bias on the output layer (due to the lack of negative spikes) to an equivalent spiking network using the approach developed by Diehl et al. (2016)
+A common approach to training spiking neural networks \cite{diehl2015fast} is through the transfer of weights learned through backpropagation on an identical non-spiking neural network and then scaling the weights. Using this approach, we can convert the TDNN model trained with backpropagtion into an equivalent spiking network using the approach developed by Diehl et al. (2016)
 
 \subsubsection*{Readout}
 
@@ -112,14 +113,31 @@ The drawback of using this method when we need to approximate real-values is the
 
 \subsection*{Columnar Spiking Neural Network (CSNN)}
 
-We propose a spiking neural network architecture, with $10$ inputs, each fully connected to $1$ of $10$ columns of $100$ spiking neurons. Each of the columns has a Hebbian connection to each of the other columns. To map the spikes from this network, we train a  K-Nearest Neighbor model using previous spikes and values. \cite{beliaev2007time} The model diagram is shown in Figure \ref{fig:csnn-network-diagram}.
+While conversion is one way to train a neural network, it is not energy efficient to perform backpropagation at every time step and then convert. We propose a spiking neural network architecture, with $10$ inputs, each fully connected to $1$ of $10$ columns of $100$ spiking neurons. Each of the columns has a Hebbian connection to each of the other columns. To map the spikes from this network, we train a  K-Nearest Neighbor model using previous spikes and values. \cite{beliaev2007time} The model diagram is shown in Figure \ref{fig:csnn-network-diagram}.
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.7\linewidth]{csnn.png}
+    \includegraphics[width=\linewidth]{../diagrams/csnn.png}
     \caption{The network architecture for the CSNN model.}
     \label{fig:csnn-network-diagram}
 \end{figure}
+
+\subsubsection*{Hebbian Learning Rule}
+The Hebbian learning rule for the CSNN model is defined in terms of the spiking activity of its $k$ columns. The weights in a connection from column $i$ to column $j$ is defined as follows:
+
+\begin{equation}
+    \Delta w_{ij} = \eta(s_{i} - \Tilde{s})(s_{j} -  \Tilde{s})
+\end{equation}
+
+where $\eta$ is the learning rate and $\Tilde{s}$ is the mean spiking activity in all the columns, defined as follows:
+
+\begin{equation}
+    \Tilde{s} = \frac{1}{k} \sum_{i = 1}^{k}{s_i}
+    \label{eq:mean_spikes_equation}
+\end{equation}
+
+In equation \ref{eq:mean_spikes_equation}, $s_i$ is the sum of spikes in a column over the duration of the input. The weight updates for this model are computed at the end of each input rather than continuously.
+
 
 \section*{Experiments}
 
@@ -129,7 +147,7 @@ We tested each of the models (LSTM, TDNN, TDSNN, CSNN) on the discrete sequence 
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.9\linewidth]{prediction-accuracy.png}
+    \includegraphics[width=0.9\linewidth]{../results/artificial.png}
     \caption{Each of the models were tested on their ability to predict the last element of the sequence.}
     \label{fig:prediction-accuracy}
 \end{figure}
