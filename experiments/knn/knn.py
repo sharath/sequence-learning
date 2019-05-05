@@ -3,12 +3,6 @@ import torch
 import pickle
 import numpy as np
 from argparse import ArgumentParser
-from bindsnet.network import Network
-from bindsnet.network.nodes import RealInput, LIFNodes
-from bindsnet.network.topology import Connection
-from bindsnet.network.monitors import Monitor
-from bindsnet.learning import Hebbian
-
 args = None
 
 
@@ -47,7 +41,7 @@ class Encoder:
             self.encode(i)
 
 
-class KNNClassifier:
+class KNN:
     def __init__(self, k=1):
         self.k = k
         self.data = []
@@ -56,7 +50,7 @@ class KNNClassifier:
         self.data.append((sample, label))
 
     def classify(self, new_sample):
-        distances = [(None, float('inf'))]*self.k
+        distances = [(None, sys.maxsize)]*self.k
         for sample, label in self.data:
             dist = torch.sum(torch.abs(new_sample-sample))
             for i, (_, best_dist) in enumerate(distances):
@@ -71,36 +65,6 @@ class KNNClassifier:
         counts = list(counts.items())
         counts.sort(key=lambda x: x[1])
         return counts[0][0]
-
-
-class Prototype(Network):
-    def __init__(self, encoder, dt: float = 1.0, lag: int = 10, n_neurons: int = 100, time: int = 100, learning: bool = False):
-        super().__init__(dt=dt)
-        self.learning = learning
-        self.n_neurons = n_neurons
-        self.lag = lag
-        self.encoder = encoder
-        self.time = time
-
-        for i in range(lag):
-            self.add_layer(RealInput(n=encoder.e_size,
-                                     traces=True), name=f'input_{i+1}')
-            self.add_layer(LIFNodes(n=self.n_neurons,
-                                    traces=True), name=f'column_{i+1}')
-            self.add_monitor(Monitor(
-                self.layers[f'column_{i+1}'], ['s'], time=self.time), name=f'monitor_{i+1}')
-            w = 0.3*torch.rand(self.encoder.e_size, self.n_neurons)
-            self.add_connection(Connection(source=self.layers[f'input_{i+1}'], target=self.layers[f'column_{i+1}'], w=w), source=f'input_{i+1}', target=f'column_{i+1}')
-
-        for i in range(lag):
-            for j in range(lag):
-                w = torch.zeros(self.n_neurons, self.n_neurons)
-                self.add_connection(Connection(source=self.layers[f'column_{i+1}'], target=self.layers[f'column_{j+1}'], w=w, update_rule=Hebbian, nu=args.nu), source=f'column_{i+1}', target=f'column_{j+1}')
-
-    def run(self, inpts, **kwargs) -> None:
-        inpts = {k: self.encoder.encode(v).repeat(
-            self.time, 1) for k, v in inpts.items()}
-        super().run(inpts, self.time, **kwargs)
 
 
 def add_noise(stream):
@@ -119,41 +83,35 @@ def main():
     encoder.precode([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
     stream = add_noise(original_stream)
 
-    net = Prototype(encoder, lag=args.lag, time=args.runtime, n_neurons=args.n_neurons, learning=args.learning)
-    classifier = KNNClassifier()
+    model = KNN(args.k)
     correct = []
 
-    print('it,target,csnn_prediction,accuracy')
+    print('it,target,knn_prediction,accuracy')
     for cur in range(10, len(stream)-1):
-        inpt = {f'input_{i+1}': stream[cur+i-10] for i in range(args.lag)}
-        target = original_stream[cur]
-        net.reset_()
-        net.run(inpt)
-    
-        readout = torch.zeros(args.lag, args.n_neurons)
-        for i in range(args.lag):
-            readout[i] = net.monitors[f'monitor_{i+1}'].get('s').sum(1)
-        prediction = classifier.classify(readout)
+        inpt = stream[cur-10:cur]
+        readout = torch.zeros(10*25)
+        for j, s in enumerate(inpt):
+            readout[j*25:(j+1)*25] = encoder.encode(s)
+        target = stream[cur]
+
+        prediction = model.classify(readout)
 
         if stream[cur+1] >= 10:
             correct.append(int(prediction == target))
             print(f'{cur},{target},{prediction},{moving_average(correct)[-1]}')
             sys.stdout.flush()
         
-        classifier.add_sample(readout, target)
+        model.add_sample(readout, target)
 
 
 if __name__ == '__main__':
     parser = ArgumentParser()
+    parser.add_argument('--k', type=int, default=1)
     parser.add_argument('--e_size', type=int, default=25)
-    parser.add_argument('--n_neurons', type=int, default=100)
     parser.add_argument('--lag', type=int, default=10)
-    parser.add_argument('--runtime', type=int, default=100)
     parser.add_argument('--seed', type=int, default=None)
     parser.add_argument('--noise_level', type=int, default=0)
-    parser.add_argument('--nu', type=float, default=0)
     parser.add_argument('--clean', action='store_true', default=False)
-    parser.add_argument('--learning', action='store_true', default=False)
     args = parser.parse_args()
 
     print(args)
