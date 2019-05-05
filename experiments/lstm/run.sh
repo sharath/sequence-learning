@@ -1,2 +1,2 @@
 #!/bin/sh
-pipenv run python lstm.py --noise_level $1
+pipenv run python lstm.py --seed $1
