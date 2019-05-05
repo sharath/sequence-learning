@@ -12,11 +12,8 @@
 
 ![CSNN](diagrams/csnn.png)
 
-## Hierarchical Temporal Memory(HTM)
-
 ## Results
 
-![Results](results/results.png)
-
+![Results](results/artificial.png)
 
 ## References
