@@ -4,7 +4,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage[backend=biber,sorting=none]{biblatex}
-\usepackage[margin=1.25in]{geometry}
+%\usepackage{geometry}
 \addbibresource{mybib.tex}
 
 \title{Dynamical Neural Network Models\\for Sequence Learning}
@@ -16,13 +16,12 @@ Advisor: Dr. Robert Kozma\\University of Massachusetts Amherst\\COMPSCI 496: Ind
 \maketitle
 
 \begin{abstract}
-In this study, we explore various neural network models for learning sequences. We propsed alternative dynamic spiking neural architectures and compare the robustness of these network models to randomized temporal noise.
+In this study, we explore various neural network models for learning sequences. We also propose alternative dynamic spiking neural architectures and compare accuracy and robustness of these network models to randomized temporal noise on a artificial prediction task.
 \end{abstract}
-
 
 \section*{Introduction}
 
-Neural network models are able to achieve superhuman performance on static tasks through recent breakthroughs in deep learning. However, the majority of real-world time-series data is often complex and noisy. As a result, we need dynamic models that can adapt to changing data streams to learn and predict in an robust, unsupervised fashion. 
+Neural network models are able to achieve superhuman performance on static tasks through recent breakthroughs in deep learning. However, the majority of real-world time-series data is often complex and noisy. As a result, we need dynamic models that can adapt to changing data streams to learn and predict in an robust, semi-supervised fashion. 
 
 \section*{Background}
 There have been some recent studies comparing various models for time-series prediction tasks \cite{cui2016continuous} on discretized data. In this study, we sill replicate their results to establish a baseline and propose unsupervised spiking neural architectures for performing this task. Spiking neurons \cite{gerstner2002spiking} are biologically-inspired models of neurons. Spiking neural networks (SNNs) \cite{maass1997networks} are organized connections between these spiking neurons which have more energy efficient \cite{cruz2012energy} implementations on neuromorphic hardware.
@@ -59,7 +58,7 @@ Cui et al. (2016) propose an artificial dataset of sequences (formed with charac
             $2$ & $4, 3, 5, 8, 7, 9$ & $6$ \\ \hline
         \end{tabular}\\ \hline
     \end{tabular}
-    \caption{A sample artificial dataset for this task. The ending character can be predicted by learning the start character and the first character of the shared subsequence.}
+    \caption{A sample artificial dataset for this task. The ending character can be predicted by learning the mapping from the start character and the first character of the shared subsequence to the end character.}
     \label{tab:dataset}
 \end{table}
 
@@ -79,7 +78,21 @@ To present each of these discrete categories to the model, we have to encode the
 
 \subsection*{Long short-term memory networks (LSTM)}
 
-Long short-term memory \cite{hochreiter1997long} networks are able to achieve state of the art results on various sequence learning tasks, so they are a good starting point to establish baseline performance on this task. We use the same LSTM architecture proposed by Cui et al. (2016) with $25$ input neurons connected to a hidden layer of $20$ LSTM cells and $25$ output neurons. The network is trained using backpropagation through time (BPTT) \cite{mozer1995focused} on the last $1000$ seen elements. The output is classified using the nearest neighbor decoder.
+Long short-term memory \cite{hochreiter1997long} networks are able to achieve state of the art results on various sequence learning tasks, so they are a good starting point to establish baseline performance on this task. We use the same LSTM architecture proposed by Cui et al. (2016) with $25$ input neurons connected to a hidden layer of $20$ LSTM cells and $25$ output neurons. The network is trained using truncated backpropagation through time (TBPTT) \cite{mozer1995focused} on the last $100$ seen elements. The output is classified using the nearest neighbor decoder.
+
+\subsubsection*{LSTM Behavior}
+There are many different variants of LSTM implementations. In this work, the LSTM cell has a forget gate, but no peephole connections. The equations defining the forward pass of the hidden layer in the LSTM model are:
+
+\begin{align*}
+    i_t &= \sigma\left(W_{ii}x_t + W_{hi}h_{t-1} + b_i\right)\\
+    f_t &= \sigma\left(W_{if}x_t + W_{hf}h_{t-1} + b_f\right)\\
+    g_t &= \tanh\left(W_{ig}x_t + W_{hg}h_{t-1} + b_g\right)\\
+    o_t &= \sigma\left(W_{io}x_t + W_{ho}h_{t-1} + b_o\right)\\
+    c_t &= c_{t-1}\ast f_t + i_t \ast g_t\\
+    h_t &= o_t \ast \tanh\left(c_t\right)\\
+\end{align*}
+
+In the above equations, $\sigma$ is the sigmoid activation function, $i_t$ is the input gate, $f_t$ is the forget gate, $g_t$ is the cell gate, $o_t$ is the output gate and the $c_t$ and $h_t$ are the cell and hidden states respectively. The $\ast$ operator is the elementwise product operator. The biases $\left(b_i, b_f, b_g, b_o\right)$ and weights $\left(W_{ii}, W_{hi}, W_{if}, W_{hf}, W_{ig}, W_{hg},W_{io}, W_{ho}\right)$ are initialized uniformly from $\left[-\frac{1}{k}, \frac{1}{k}\right]$, where $k$ is the number of hidden units. These terms are then learned through truncated backpropagation through time (TBPTT) which involves keeping a short history of elements and clipping the gradient updates to the beginning of the history. \cite{sutskever2013training}
 
 \begin{figure}[!h]
     \centering
@@ -100,14 +113,10 @@ Time-delay neural networks (TDNN) are feed-forward neural networks trained using
     \label{fig:lstm-online-model}
 \end{figure}
 
-\subsection*{Time-delay spiking neural network (TDSNN)}
+\subsection*{Time-delay spiking neural networks (TDSNN)}
 
-A common approach to training spiking neural networks \cite{diehl2015fast} is through the transfer of weights learned through backpropagation on an identical non-spiking neural network and then scaling the weights. Using this approach, we can convert the TDNN model trained with backpropagtion into an equivalent spiking network using the approach developed by Diehl et al. (2016)
-
-\subsubsection*{Readout}
-
-The drawback of using this method when we need to approximate real-values is the loss of precision based on the duration of the input. For this task, we show the input for $500$ simulated milliseconds. The summed spikes from the output layer are converted to the $25$ length vector by dividing by the runtime and subtracting $1$. As with the other models, the output is classified using the nearest neighbor decoder.
-
+A common approach to training spiking neural networks \cite{diehl2015fast} is through the transfer of weights learned through backpropagation on an identical non-spiking neural network and then scaling the weights. Using this approach, we can convert the TDNN model trained with backpropagtion into an equivalent spiking network using the approach developed by Diehl et al. (2016) This method doesn't perform well when the output values are negative. To facilitate these negative spikes, the output layer was doubled in size and the negative weight matrix of the original connections was concatentated. The same was done for the bias. The positive sum of spikes was subracted from the negative sum of spikes and then divided by the runtime to obtain an approximation of the original network's value.
+The drawback of using this method when we need to approximate real-values is the loss of precision based on the duration of the input. For this task, we show the input for $500$ simulated milliseconds. As with the other models, the output is classified using the nearest neighbor decoder.
 
 %\subsection*{K-Nearest Neighbor (KNN)}
 
@@ -123,7 +132,7 @@ While conversion is one way to train a neural network, it is not energy efficien
 \end{figure}
 
 \subsubsection*{Hebbian Learning Rule}
-The Hebbian learning rule for the CSNN model is defined in terms of the spiking activity of its $k$ columns. The weights in a connection from column $i$ to column $j$ is defined as follows:
+The Hebbian learning rule for the CSNN model is defined in terms of the spiking activity of its $k$ columns. The weight change on spike in a connection from column $i$ to column $j$ is defined as follows:
 
 \begin{equation}
     \Delta w_{ij} = \eta(s_{i} - \Tilde{s})(s_{j} -  \Tilde{s})
