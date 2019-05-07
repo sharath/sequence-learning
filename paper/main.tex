@@ -117,7 +117,14 @@ A common approach to training spiking neural networks is through the transfer of
 
 This method works reasonably well when the output values of the network are positive, however the output has values that are negative. To facilitate these negative spikes, the output layer was doubled in size and the negative weight matrix of the original connections was concatentated. The same was done for the bias. The positive sum of spikes was subtracted from the negative sum of spikes and then divided by the runtime to obtain an approximation of the original network's output.
 
-The drawback of using this method when we need to approximate real-values is the loss of precision based on the duration of the input. For this task, we show the input for $500$ simulated milliseconds. As with the other models, the output is classified using the nearest neighbor decoder.
+The drawback of using this method when we need to approximate real-values is the loss of precision based on the duration of the input. For this task, we show the input for $500$ simulated milliseconds. The conversion loss, that is, the euclidean distance between the output of the TDNN and the TDSNN is show in Figure  As with the other models, the output is classified using the nearest neighbor decoder.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{../results/conversion-loss.png}
+    \caption{Caption}
+    \label{fig:my_label}
+\end{figure}
 
 %\subsection*{K-Nearest Neighbor (KNN)}
 
