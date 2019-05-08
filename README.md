@@ -1,8 +1,8 @@
 # sequence-learning
 
-## Time delay neural network (TDNN)
+## Time Delay (Spiking) Neural Network (TD(S)NN)
 
-![TDNN](diagrams/tdnn.png)
+![TD(S)NN](diagrams/tdnn.png)
 
 ## Long short-term memory (LSTM)
 
