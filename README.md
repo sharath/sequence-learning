@@ -14,6 +14,13 @@
 
 ## Results
 
+### Artifical Dataset Prediction Task
+
 ![Results](results/artificial.png)
+
+### TDNN to TDSNN Conversion Loss
+
+![Results](results/conversion-loss.png)
+
 
 ## References
