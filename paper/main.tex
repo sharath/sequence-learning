@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage[backend=biber,sorting=none]{biblatex}
 %\usepackage{geometry}
+\usepackage{hyperref}
 \usepackage{float}
 \addbibresource{mybib.tex}
 
@@ -28,7 +29,7 @@ Neural network models are able to achieve superhuman performance on static tasks
 
 \subsection*{Artificial Dataset}
 
-Cui et al. (2016) propose an artificial dataset of sequences of varying length (formed with characters) with overlapping subsequences. A sequence is sampled from the dataset and presented to the model at each time step. After the last character of the sequence is presented, a character is sampled from the noise distribution and shown to the model. This process is repeated until $10,000$ characters (counting both sequences and noise characters) are shown to the model. After the model sees $10,000$ characters, the last character of sequences with shared subsequences is swapped. The performance on this task is the accuracy of predicting the last character over a window of the last $100$ sequences. A sample dataset is summarized in Table \ref{tab:dataset}.
+Cui et al. (2016) propose an artificial dataset of sequences of varying length (formed with characters) with overlapping subsequences. A sequence is sampled from the dataset and presented to the model at each time step. After the last character of the sequence is presented, a character is sampled from the noise distribution and shown to the model. This process is repeated until $10,000$ characters (counting both sequences and noise characters) are shown to the model. After the model sees $10,000$ characters, the last character of sequences with shared subsequences is swapped. The performance on this task is the accuracy of predicting the last character over a window of the last $100$ sequences. A sample dataset is summarized in Table \ref{tab:dataset}.  The code and datasets are open-source and available at \href{https://github.com/sharath/sequence-learning}{https://github.com/sharath/sequence-learning}.
 
 \begin{table}[H]
     \centering
@@ -60,17 +61,17 @@ Cui et al. (2016) propose an artificial dataset of sequences of varying length (
     \label{tab:dataset}
 \end{table}
 
-\subsection*{Input Encoding}
-
-To present each of these discrete categories to the model, we have to encode the categories to a vector representations. One possibility is to one-hot encode each character, but this representation scales poorly with the number of unique characters. For this reason, the characters are encoded as random vectors with real values in the interval $\left[-1, 1\right]$, similar to distributed representations used in natural language learning. \cite{mikolov2013distributed} The euclidean distances between pairs of unique sequence characters using a $25$ length random ending is shown in Figure \ref{fig:encoding-distance}. The decoder for converting vectors back to character uses a nearest neighbor approach, therefore the precision in the output vector from the model is important as the number of noise characters increases. 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{../notebooks/matrix-distances.png}
+    \includegraphics[width=0.7\linewidth]{../notebooks/matrix-distances.png}
     \caption{Heatmap of squared errors between distributed random encodings for the sequence characters, with $-1$ as the separating bit for ease of visualization.}
     \label{fig:encoding-distance}
 \end{figure}
 
+\subsection*{Input Encoding}
+
+To present each of these discrete categories to the model, we have to encode the categories to a vector representations. One possibility is to one-hot encode each character, but this representation scales poorly with the number of unique characters. For this reason, the characters are encoded as random vectors with real values in the interval $\left[-1, 1\right]$, similar to distributed representations used in natural language learning. \cite{mikolov2013distributed} The euclidean distances between pairs of unique sequence characters using a $25$ length random ending is shown in Figure \ref{fig:encoding-distance}. The decoder for converting vectors back to character uses a nearest neighbor approach, therefore the precision in the output vector from the model is important as the number of noise characters increases. 
 
 \section*{Supervised Models}
 
@@ -109,6 +110,13 @@ The network can be formulated as an equation in terms of the 250 length input ve
     \label{eq:tdnn}
 \end{equation}
 The biases $\left(b_i, b_h\right)$ and the weights $\left(W_{ih}, W_{ho}\right)$ are initialized uniformly randomly from $\left[-\frac{1}{\sqrt{k_i}}, \frac{1}{\sqrt{k_i}}\right]$, where $k_i$ is the number of input features to the respective layer. The weights are then learned through gradient descent.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{../diagrams/tdnn.png}
+    \caption{The network architecture for the TDNN/TDSNN model.}
+    \label{fig:lstm-online-model}
+\end{figure}
 
 \subsection*{Time-delay spiking neural networks (TDSNN)}
 
@@ -149,7 +157,6 @@ The original readout method proposed by Rueckauer et al. looks at the voltage of
     \text{TDSNN}_{\text{readout1}} = \frac{1}{T} \sum_{t=1}^{T}{S_t^{\left(o\right)}}
 \end{equation}
 
-
 \subsubsection*{Negative Readout}
 When the output values produced by the TDNN is negative, the average sum of spikes fails to account for the negative output values. To account for these negative spikes, the output layer was doubled in size and the negative weight matrix of the original connections was concatenated. The same was done for the bias. The positive sum of spikes was subtracted from the negative sum of spikes and then divided by the runtime $T$ to obtain an approximation of the original network's output.
 
@@ -176,13 +183,6 @@ The drawback of using spikes instead of voltages to approximate real-values is t
     \includegraphics[width=0.8\linewidth]{../results/conversion-loss.png}
     \caption{Average distance between the output of the TDNN and the TDSNN for different runtimes over the $20,000$ elements in the artificial dataset.}
     \label{fig:clfig}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\linewidth]{../diagrams/tdnn.png}
-    \caption{The network architecture for the TDNN/TDSNN model.}
-    \label{fig:lstm-online-model}
 \end{figure}
 
 \section*{Semi-supervised Models}
@@ -224,32 +224,43 @@ The weight change on spike in connections from column $a$ to column $b$ for lear
 
 The weight updates for this model are computed at the end of each input rather than continuously.
 
-\section*{Experiments}
+\section*{Results}
 
-\subsection*{Prediction Accuracy}
-
-We tested each of the models (LSTM, TDNN, TDSNN, CSNN) on the discrete sequence learning task. The prediction accuracy results are shown in Figure \ref{fig:prediction-accuracy}. The prediction accuracy is the percent of correct predictions over a window of the last $100$ sequences.
+\subsection*{Supervised Models}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\linewidth]{../results/artificial.png}
-    \caption{Each of the models were tested on their ability to predict the last element of the sequence.}
-    \label{fig:prediction-accuracy}
+    \includegraphics[width=\linewidth]{../results/artificial-supervised.png}
+    \caption{The TDNN (teal) and TDSNN (orange) models are able to perfectly predict the sequence endings after $4,000$ elements, but their performance drops dramatically after the sequence endings are swapped. The LSTM (purple) is able to reach a reasonable performance on this task before the task and the drop after the sequences endings are swapped is only about $30\%$.}
+    \label{fig:prediction-accuracy1}
 \end{figure}
 
-The KNN (green) reaches perfect accuracy before the dataset is endings are swapped, but fails to relearn the data and only reaches $50\%$ accuracy afterward. The TDSNN (orange) is able to match the TDNN (teal) Surprisingly, the CSNN (blue) performance is almost able to match the LSTM (purple) performance. However the variance in the CSNN performance is much greater than the LSTM.
+\subsection*{Semi-supervised Models}
 
-%\subsection*{Perturbation}
-
-%Another important property of each of these models is the robustness to temporal noise. We introduce an $\alpha$ parameters which represents the probability that a character is swapped for another character. 
-
-%\subsection*{Continuous Dataset}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{../results/artificial-unsupervised.png}
+    \caption{The KNN (green) reaches perfect accuracy before the dataset is endings are swapped, but fails to relearn the data and only reaches $50\%$ accuracy afterward. The CSNN never manages to reach perfect accuracy on the task, but it is able to re-learn the sequence endings after they are swapped after experiencing a drop in performance similar to the LSTM in Figure \ref{fig:prediction-accuracy1}.}
+    \label{fig:prediction-accuracy2}
+\end{figure}
 
 \section*{Conclusion}
 
-We have shown two possible spiking architectures for learning changing patterns in time-series data in a semi-supervised fashion.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|} \hline
+        Model & Average Accuracy \\ \hline
+        LSTM  & $0.8049 \pm 0.088$ \\ \hline
+        TDNN  & $0.8112 \pm 0.012$ \\ \hline
+        TDSNN & $0.8097 \pm 0.013$ \\ \hline
+        KNN   & $0.6391 \pm 0.021$ \\ \hline
+        CSNN  & $\textbf{0.8250} \pm 0.119$ \\ \hline
+    \end{tabular}
+    \caption{The average accuracy on the discrete sequence learning task over $10$ randomized runs.}
+    \label{tab:meanaccuracy}
+\end{table}
 
+We have shown two possible spiking architectures for learning changing patterns in time-series data. We tested each of the models (LSTM, TDNN, TDSNN, KNN, CSNN) on the discrete sequence learning task.  The TDSNN (orange) is able to match the TDNN (teal) Surprisingly, the CSNN (blue) performance over $10$ runs has the highest average accuracy over the sequence learning task, but it also has the average standard deviation over the $10$ runs.
 
-\newpage
 \printbibliography[title={References}]
 \end{document}
