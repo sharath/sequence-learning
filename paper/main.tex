@@ -1,7 +1,7 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
-\usepackage[draft]{graphicx}
+\usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage[backend=biber,sorting=none]{biblatex}
 %\usepackage{geometry}
@@ -90,12 +90,12 @@ There are many different variants of LSTM implementations. In this work, the LST
     h_t &= o_t \ast \tanh\left(c_t\right)
 \end{align}
 
-In the above equations, $\sigma$ is the sigmoid activation function, $i_t$ is the input gate, $f_t$ is the forget gate, $g_t$ is the cell gate, $o_t$ is the output gate and the $c_t$ and $h_t$ are the cell and hidden states respectively. The $\ast$ operator is the element-wise product operator. The biases $\left(b_i, b_f, b_g, b_o\right)$ and weights $\left(W_{ii}, W_{hi}, W_{if}, W_{hf}, W_{ig}, W_{hg},W_{io}, W_{ho}\right)$ are initialized randomly uniformly from $\left[-\frac{1}{\sqrt{k}}, \frac{1}{\sqrt{k}}\right]$, where $k$ is the number of hidden units. \cite{jozefowicz2015empirical} 
+In the above equations, $\sigma$ is the sigmoid activation function, $i_t$ is the input gate, $f_t$ is the forget gate, $g_t$ is the cell gate, $o_t$ is the output gate and the $c_t$ and $h_t$ are the cell and hidden states respectively. The $\ast$ operator is the element-wise product operator. The biases $\left(b_i, b_f, b_g, b_o\right)$ and weights $\left(W_{ii}, W_{hi}, W_{if}, W_{hf}, W_{ig}, W_{hg},W_{io}, W_{ho}\right)$ are initialized uniformly randomly from $\left[-\frac{1}{\sqrt{k}}, \frac{1}{\sqrt{k}}\right]$, where $k$ is the number of hidden units. \cite{jozefowicz2015empirical} 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{../diagrams/lstm.png}
-    \caption{The network architecture for the LSTM-online model. The LSTM cells maintain an internal hidden state.}
+    \caption{The network architecture for the LSTM-online model. The LSTM cells (teal) maintain an internal hidden state.}
     \label{fig:lstm-online-model}
 \end{figure}
 
@@ -108,7 +108,7 @@ The network can be formulated as an equation in terms of the 250 length input ve
     \text{TDNN}(x_t) = R\left(x_tW_{ih}^T + b_i\right)W_{ho}^T + b_h
     \label{eq:tdnn}
 \end{equation}
-The biases $\left(b_i, b_h\right)$ and the weights $\left(W_{ih}, W_{ho}\right)$ are initialized randomly uniformly from $\left[-\frac{1}{\sqrt{k_i}}, \frac{1}{\sqrt{k_i}}\right]$, where $k_i$ is the number of input features to the respective layer. The weights are then learned through gradient descent.
+The biases $\left(b_i, b_h\right)$ and the weights $\left(W_{ih}, W_{ho}\right)$ are initialized uniformly randomly from $\left[-\frac{1}{\sqrt{k_i}}, \frac{1}{\sqrt{k_i}}\right]$, where $k_i$ is the number of input features to the respective layer. The weights are then learned through gradient descent.
 
 \subsection*{Time-delay spiking neural networks (TDSNN)}
 
@@ -117,7 +117,7 @@ A common approach to training spiking neural networks is through the transfer of
 \subsubsection*{Conversion}
 The converted network has neurons that output discrete spikes rather than continuous values. Each neuron accumulates voltage $v$ from the previous layer until the voltage reaches a threshold. After the voltage surpasses the threshold, the neuron emits a discrete spike to the next layer and the voltage is reset by subtraction of the threshold. \cite{diehl2015fast} 
 
-The change in the voltages of each of the neurons in the hidden layer $\frac{dV_h}{dt}$ at time $t$ can be written in terms of the input $x_t$, the scale for the connection between the input and hidden layer found through the data-based normalization $\lambda_{ih}$, the transferred connection and bias weights from the TDNN $\left(W_{ih}, b_{i}\right)$, and the neuron spike threshold $\tau$ as:
+The change in the voltages of each of the neurons in the hidden layer at time $t$ can be written in terms of the input $x_t$, the scale for the connection between the input and hidden layer found through the data-based normalization $\lambda_{ih}$, the transferred connection and bias weights from the TDNN $\left(W_{ih}, b_{i}\right)$, and the neuron spike threshold $\tau$ as:
 
 \begin{equation}
     \frac{dV^{\left(h\right)}_t}{dt} = \lambda_{ih}\left(W_{ih}^Tx_t + b_i\right) - S^{\left(h\right)}_{t-1}\tau
@@ -130,8 +130,7 @@ where $S^{\left(h\right)}_{t}$ are the spikes in the hidden layer at time $t$. F
       0 & \text{else.} \\ \end{cases}
 \end{equation}
 
-Similarly the following equation models the change in the voltages of the neurons in the output layer of the TDSNN:
-
+Similarly, the following equation models the change in the voltages of the neurons in the output layer of the TDSNN:
 \begin{equation}
     \frac{dV^{\left(o\right)}_t}{dt} = \lambda_{ho} \left(W_{ho}^TS^{\left(h\right)}_{t} + b_h\right) - S^{\left(o\right)}_{t-1} \tau
 \end{equation}
@@ -144,7 +143,7 @@ where $\lambda_{ho}$ is the scale found through the data-based normalization for
 \end{equation}
 
 \subsubsection*{Original Readout}
-The original readout method proposed by Rueckauer et al. looks at the voltage of the output layer rather than the spikes. This readout method combined with the the subtractive reset mechanism of the spiking neurons in the conversion method perform well on various tasks, \cite{rueckauer2017conversion} but in some cases we may not want to use the voltages. One alternative may be to use the average sum of spikes over the total runtime $T$ in the output layer. This approximation of the TDNN output values can be written as:
+The original readout method proposed by Rueckauer et al. looks at the voltage of the output layer rather than the spikes. This readout method combined with the the subtractive reset mechanism of the spiking neurons in the conversion method perform well on various tasks, \cite{rueckauer2017conversion} but in some cases we may not want to use the voltages. A more biologically inspired alternative for approximating the output could be the average sum of spikes over the total runtime $T$ in the output layer. This approximation of the TDNN output values can be written as:
 
 \begin{equation}
     \text{TDSNN}_{\text{readout1}} = \frac{1}{T} \sum_{t=1}^{T}{S_t^{\left(o\right)}}
@@ -152,7 +151,9 @@ The original readout method proposed by Rueckauer et al. looks at the voltage of
 
 
 \subsubsection*{Negative Readout}
-When the output values produced by the TDNN is negative, the average sum of spikes fails to account for the negative output values. To account for these negative spikes, the output layer was doubled in size and the negative weight matrix of the original connections was concatenated. The same was done for the bias. The positive sum of spikes was subtracted from the negative sum of spikes and then divided by the runtime $T$ to obtain an approximation of the original network's output. For a TDNN that has $l$ neurons in the output layer, the change in voltage for each neuron $j$ in the output layer can be written as:
+When the output values produced by the TDNN is negative, the average sum of spikes fails to account for the negative output values. To account for these negative spikes, the output layer was doubled in size and the negative weight matrix of the original connections was concatenated. The same was done for the bias. The positive sum of spikes was subtracted from the negative sum of spikes and then divided by the runtime $T$ to obtain an approximation of the original network's output.
+
+For a TDNN that has $l$ neurons in the output layer, the change in voltage for each neuron $j$ in the output layer is changed to:
 
 \begin{equation}
     \frac{dV^{\left(o\right)}_t}{dt} = 
@@ -172,7 +173,7 @@ The drawback of using spikes instead of voltages to approximate real-values is t
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{../results/conversion-loss.png}
+    \includegraphics[width=0.8\linewidth]{../results/conversion-loss.png}
     \caption{Average distance between the output of the TDNN and the TDSNN for different runtimes over the $20,000$ elements in the artificial dataset.}
     \label{fig:clfig}
 \end{figure}
@@ -192,7 +193,7 @@ The K-Nearest Neighbors (KNN) model makes a prediction $\hat{d}_{t+1}$ on an inp
 
 \subsection*{Columnar Spiking Neural Network (CSNN)}
 
-While conversion is one way to train a neural network, it is a supervised method that is not energy efficient on hardware implementations. We propose a spiking neural network architecture, with $k$ inputs, each fully connected to $1$ of $k$ columns of $L$ Leaky Integrate-and-Fire (LIF) neurons with randomly initialized weights. \cite{gerstner2002spiking} Each neuron in each column has a zero-weight connection to each neuron in each of the other columns. The inter-column connections have a Hebbian-inspired update rule. To map the spikes from this network, we use the K-Nearest Neighbors model with the sum of spikes of each neuron in each column over the runtime $T$. \cite{beliaev2007time} The model diagram is shown in Figure \ref{fig:csnn-network-diagram}.
+While conversion is one way to train a spiking neural network, it is a supervised method that is still not energy efficient on hardware implementations. We propose a spiking neural network architecture, with $k$ inputs, each fully connected to $1$ of $k$ columns of $L$ Leaky Integrate-and-Fire (LIF) neurons with weights initialized uniformly randomly from $\left[0, 0.3\right]$. \cite{gerstner2002spiking} Each neuron in each column has a zero-weight connection to each neuron in each of the other columns. The inter-column connections have a Hebbian-inspired update rule. To map the spikes from this network, we use the K-Nearest Neighbors model with the sum of spikes of each neuron in each column over the runtime $T$. \cite{beliaev2007time} The model diagram is shown in Figure \ref{fig:csnn-network-diagram}.
 
 \begin{figure}[H]
     \centering
@@ -202,20 +203,26 @@ While conversion is one way to train a neural network, it is a supervised method
 \end{figure}
 
 \subsubsection*{Hebbian Learning Rule}
-The Hebbian learning rule for the CSNN model is defined in terms of the spiking activity of its $k$ columns. The weight change on spike in a connection from column $i$ to column $j$ is defined as follows:
+The Hebbian learning rule for the CSNN model is defined in terms of the spiking activity of its $k$ columns over the runtime $T$. The sum of spikes in a column $c$ over the runtime is defined as:
 
 \begin{equation}
-    \Delta w_{ij} = \eta(s_{i} - \Tilde{s})(s_{j} -  \Tilde{s})
+    \gamma_c = \sum_{t = 1}^{T}{s_t^{\left(c\right)}}
 \end{equation}
 
-where $\eta$ is the learning rate and $\Tilde{s}$ is the mean spiking activity in all the columns, defined as follows:
+where $s_t^{\left(c\right)}$ is a binary vector that represents the spiking neurons at time $t$ in column $c$. The mean spiking activity for each neuron $\Tilde{s}$ is then defined as:
 
 \begin{equation}
-    \Tilde{s} = \frac{1}{k} \sum_{i = 1}^{k}{s_i}
+    \Tilde{s} = \frac{1}{k} \sum_{c = 1}^{k}{\gamma_c}
     \label{eq:mean_spikes_equation}
 \end{equation}
 
-In equation \ref{eq:mean_spikes_equation}, $s_i$ is the sum of spikes in a column over the duration of the input. The weight updates for this model are computed at the end of each input rather than continuously.
+The weight change on spike in connections from column $a$ to column $b$ for learning rate $\eta$ is defined as follows:
+
+\begin{equation}
+    \Delta w_{a,b} = \eta * (\gamma_a - \Tilde{s})\otimes(\gamma_b - \Tilde{s})
+\end{equation}
+
+The weight updates for this model are computed at the end of each input rather than continuously.
 
 \section*{Experiments}
 
