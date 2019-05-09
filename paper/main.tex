@@ -1,10 +1,11 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
-\usepackage{graphicx}
+\usepackage[draft]{graphicx}
 \usepackage{amsmath}
 \usepackage[backend=biber,sorting=none]{biblatex}
-\usepackage{geometry}
+\usepackage[margin=1.2in]{geometry}
+\usepackage{float}
 \addbibresource{mybib.tex}
 
 \title{Dynamical Neural Network Models\\for Sequence Learning}
@@ -16,23 +17,23 @@ Advisor: Dr. Robert Kozma\\University of Massachusetts Amherst\\COMPSCI 496: Ind
 \maketitle
 
 \begin{abstract}
-In this study, we explore various neural network models for learning sequences. We also propose alternative dynamic spiking neural architectures and compare accuracy and robustness of these network models to randomized temporal noise on a artificial prediction task.
+In this study, we explore various existing neural network models for learning sequences. We also propose alternative dynamic spiking neural architectures and compare accuracy of these network models on an artificial prediction task.
 \end{abstract}
 
 \section*{Introduction}
 
-Neural network models are able to achieve superhuman performance on static tasks through recent breakthroughs in deep learning. However, the majority of real-world time-series data is often complex and noisy. As a result, we need dynamic models that can adapt to changing data streams to learn and predict in an robust, semi-supervised fashion. 
+Neural network models are able to achieve superhuman performance on static tasks due to recent breakthroughs in deep learning. However, the majority of real-world time-series data is often complex and noisy. As a result, we need dynamic models that can adapt to changing data streams to learn and predict in an robust, semi-supervised fashion. 
 
 \section*{Background}
-There have been some recent studies comparing various models for time-series prediction tasks \cite{cui2016continuous} on discretized data. In this study, we will replicate their results to establish a baseline and propose unsupervised spiking neural architectures for performing this task. Spiking neurons \cite{gerstner2002spiking} are biologically-inspired models of neurons. Spiking neural networks (SNNs) \cite{maass1997networks} are organized connections between these spiking neurons which have more energy efficient \cite{cruz2012energy} implementations on neuromorphic hardware.
+There have been some recent studies comparing various models for time-series prediction tasks \cite{cui2016continuous} on discretized data. In this study, we will replicate their results to establish a baseline and propose semi-surpervised spiking neural architectures for performing this task. Spiking neurons \cite{gerstner2002spiking} are biologically-inspired models of neurons. Spiking neural networks (SNNs) \cite{maass1997networks} are organized connections between these spiking neurons which have more energy efficient \cite{cruz2012energy} implementations on neuromorphic hardware.
 
 \section*{Methodology}
 
 \subsection*{Artificial Dataset}
 
-Cui et al. (2016) propose an artificial dataset of sequences (formed with characters) with overlapping subsequences. A sequence is sampled from the dataset and presented to the model at each time step. After the last character of the sequence is presented, a character is sampled from the noise distribution and shown to the model. This process is repeated until $10,000$ characters (counting both sequences and noise characters) are shown to the model. After the model sees $10,000$ characters, the last character of sequences with shared subsequences is swapped. The performance on this task is the accuracy of predicting the last character over a window of the last $100$ sequences. A sample dataset is summarized in Table \ref{tab:dataset}.
+Cui et al. (2016) propose an artificial dataset of sequences of varying length (formed with characters) with overlapping subsequences. A sequence is sampled from the dataset and presented to the model at each time step. After the last character of the sequence is presented, a character is sampled from the noise distribution and shown to the model. This process is repeated until $10,000$ characters (counting both sequences and noise characters) are shown to the model. After the model sees $10,000$ characters, the last character of sequences with shared subsequences is swapped. The performance on this task is the accuracy of predicting the last character over a window of the last $100$ sequences. A sample dataset is summarized in Table \ref{tab:dataset}.
 
-\begin{table}[!h]
+\begin{table}[H]
     \centering
     \begin{tabular}{|c|c|} \hline
         Pre-$10,000$ & Post-$10,000$  \\ \hline
@@ -62,18 +63,18 @@ Cui et al. (2016) propose an artificial dataset of sequences (formed with charac
     \label{tab:dataset}
 \end{table}
 
-\begin{figure}[!h]
+\subsection*{Input Encoding}
+
+To present each of these discrete categories to the model, we have to encode the categories to a vector representations. One possibility is to one-hot encode each character, but this representation scales poorly with the number of unique characters. For this reason, the characters are encoded as random vectors with real values in the interval $\left[-1, 1\right]$, similar to distributed representations used in natural language learning. \cite{mikolov2013distributed} The euclidean distances between pairs of unique sequence characters using a $25$ length random ending is shown in Figure \ref{fig:encoding-distance}. The decoder for converting vectors back to character uses a nearest neighbor approach, therefore the precision in the output vector from the model is important as the number of noise characters increases. 
+
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\linewidth]{../notebooks/matrix-distances.png}
+    \includegraphics[width=0.6\linewidth]{../notebooks/matrix-distances.png}
     \caption{Heatmap of squared errors between distributed random encodings for the sequence characters, with $-1$ as the separating bit for ease of visualization.}
     \label{fig:encoding-distance}
 \end{figure}
 
-\subsection*{Input Encoding}
-
-To present each of these discrete categories to the model, we have to encode the categories to a vector representations. One possibility is to one-hot encode each character, but this representation scales poorly when the number of unique characters increases. For this reason, the characters are encoded as random vectors with real values in the interval $\left[-1, 1\right]$, similar to distributed representations used in natural language learning. \cite{mikolov2013distributed} The euclidean distances between pairs of unique sequence characters using a $25$ length random ending is shown in Figure \ref{fig:encoding-distance}. The decoder for converting vectors back to character uses a nearest neighbor approach, therefore the precision in the output vector from the model is important as the number of noise characters increases. 
-
-\section*{Models}
+\section*{Supervised Models}
 
 \subsection*{Long short-term memory networks (LSTM)}
 
@@ -91,9 +92,9 @@ There are many different variants of LSTM implementations. In this work, the LST
     h_t &= o_t \ast \tanh\left(c_t\right)\\
 \end{align*}
 
-In the above equations, $\sigma$ is the sigmoid activation function, $i_t$ is the input gate, $f_t$ is the forget gate, $g_t$ is the cell gate, $o_t$ is the output gate and the $c_t$ and $h_t$ are the cell and hidden states respectively. The $\ast$ operator is the elementwise product operator. The biases $\left(b_i, b_f, b_g, b_o\right)$ and weights $\left(W_{ii}, W_{hi}, W_{if}, W_{hf}, W_{ig}, W_{hg},W_{io}, W_{ho}\right)$ are initialized uniformly from $\left[-\frac{1}{\sqrt{k}}, \frac{1}{\sqrt{k}}\right]$, where $k$ is the number of hidden units. \cite{jozefowicz2015empirical} 
+In the above equations, $\sigma$ is the sigmoid activation function, $i_t$ is the input gate, $f_t$ is the forget gate, $g_t$ is the cell gate, $o_t$ is the output gate and the $c_t$ and $h_t$ are the cell and hidden states respectively. The $\ast$ operator is the element-wise product operator. The biases $\left(b_i, b_f, b_g, b_o\right)$ and weights $\left(W_{ii}, W_{hi}, W_{if}, W_{hf}, W_{ig}, W_{hg},W_{io}, W_{ho}\right)$ are initialized randomly uniformly from $\left[-\frac{1}{\sqrt{k}}, \frac{1}{\sqrt{k}}\right]$, where $k$ is the number of hidden units. \cite{jozefowicz2015empirical} 
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{../diagrams/lstm.png}
     \caption{The network architecture for the LSTM-online model. The LSTM cells maintain an internal hidden state.}
@@ -104,35 +105,44 @@ In the above equations, $\sigma$ is the sigmoid activation function, $i_t$ is th
 
 Time-delay neural networks (TDNN) are feed-forward neural networks trained using a lag on a window of previous data. \cite{waibel1995phoneme} For this task, the TDNN is trained on the last $3000$ samples every $1000$ elements with a lag of $10$. \cite{rojas1996backpropagation} The model has $250$ input neurons that are fully connected to a hidden layer of $200$ neurons. The hidden layers utilize the ReLU non-linearity and are fully connected to $25$ output neurons. The model proposed by Cui et al. has a sigmoid non-linearity in the hidden layer. We replaced the non-linearity to allow for conversion into a spiking neural network. As with the LSTM model, the output is classified using the nearest neighbor decoder.
 
-\begin{figure}[!h]
+The network can be formulated as an equation in terms of the 250 length input vector $x_t$ and the ReLU non-linearity function $R(z)$:
+\begin{equation}
+    \text{TDNN}(x_t) = R\left(x_tW_{ih}^T + b_i\right)W_{ho}^T + b_h
+    \label{eq:tdnn}
+\end{equation}
+In equation \ref{eq:tdnn}, the biases $\left(b_i, b_h\right)$ and the weights $\left(W_{ih}, W_{ho}\right)$ are are initialized randomly uniformly from $\left[-\frac{1}{\sqrt{k_i}}, \frac{1}{\sqrt{k_i}}\right]$, where $k_i$ is the number of input features to the respective layer. The weights are then learned through gradient descent.
+
+\subsection*{Time-delay spiking neural networks (TDSNN)}
+
+A common approach to training spiking neural networks is through the transfer of weights learned through backpropagation on an identical non-spiking neural network and then scaling the weights. \cite{diehl2015fast} Using this approach, we can convert the TDNN model trained with backpropagtion into an equivalent spiking network using the approach developed by Diehl et al. (2016)
+
+This method works reasonably well when the output values of the network are positive, however the output has values that are negative. To facilitate these negative spikes, the output layer was doubled in size and the negative weight matrix of the original connections was concatenated. The same was done for the bias. The positive sum of spikes was subtracted from the negative sum of spikes and then divided by the runtime to obtain an approximation of the original network's output.
+
+The drawback of using this method when we need to approximate real-values is the loss of precision based on the duration of the input. For this task, we show the input for $500$ simulated milliseconds. The conversion loss, that is, the euclidean distance between the output of the TDNN and the TDSNN is show in Figure \ref{fig:clfig}. As with the other models, the output is classified using the nearest neighbor decoder.
+
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{../diagrams/tdnn.png}
     \caption{The network architecture for the TDNN/TDSNN model.}
     \label{fig:lstm-online-model}
 \end{figure}
 
-\subsection*{Time-delay spiking neural networks (TDSNN)}
-
-A common approach to training spiking neural networks is through the transfer of weights learned through backpropagation on an identical non-spiking neural network and then scaling the weights. \cite{diehl2015fast} Using this approach, we can convert the TDNN model trained with backpropagtion into an equivalent spiking network using the approach developed by Diehl et al. (2016)
-
-This method works reasonably well when the output values of the network are positive, however the output has values that are negative. To facilitate these negative spikes, the output layer was doubled in size and the negative weight matrix of the original connections was concatentated. The same was done for the bias. The positive sum of spikes was subtracted from the negative sum of spikes and then divided by the runtime to obtain an approximation of the original network's output.
-
-The drawback of using this method when we need to approximate real-values is the loss of precision based on the duration of the input. For this task, we show the input for $500$ simulated milliseconds. The conversion loss, that is, the euclidean distance between the output of the TDNN and the TDSNN is show in Figure  As with the other models, the output is classified using the nearest neighbor decoder.
-
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.5\linewidth]{../results/conversion-loss.png}
-    \caption{Caption}
-    \label{fig:my_label}
+    \caption{Average distance between the output of the TDNN and the TDSNN for different runtimes over the $20,000$ elements in the artificial dataset.}
+    \label{fig:clfig}
 \end{figure}
 
-%\subsection*{K-Nearest Neighbor (KNN)}
+\section*{Semi-supervised Models}
+
+\subsection*{K-Nearest Neighbor (KNN)}
 
 \subsection*{Columnar Spiking Neural Network (CSNN)}
 
 While conversion is one way to train a neural network, it is not energy efficient to perform backpropagation and then convert. We propose a spiking neural network architecture, with $10$ inputs, each fully connected to $1$ of $10$ columns of $100$ spiking neurons with randomly initialized weights. Each of the columns has a Hebbian connection to each of the other columns initialized with zero weights. To map the spikes from this network, we train a K-Nearest Neighbor model using previous spikes and values. \cite{beliaev2007time} The model diagram is shown in Figure \ref{fig:csnn-network-diagram}.
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{../diagrams/csnn.png}
     \caption{The network architecture for the CSNN model.}
@@ -165,23 +175,24 @@ In equation \ref{eq:mean_spikes_equation}, $s_i$ is the sum of spikes in a colum
 
 We tested each of the models (LSTM, TDNN, TDSNN, CSNN) on the discrete sequence learning task. The prediction accuracy results are shown in Figure \ref{fig:prediction-accuracy}. The prediction accuracy is the percent of correct predictions over a window of the last $100$ sequences.
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{../results/artificial.png}
     \caption{Each of the models were tested on their ability to predict the last element of the sequence.}
     \label{fig:prediction-accuracy}
 \end{figure}
 
-The CSNN prediction accuracy dramatically drops after the sequence endings are swapped. To improve performance, we can use a window for the data samples in the KNN Classifier. Furthermore, the learning rates for the Hebbian updates could be more carefully chosen.
+The KNN (green) reaches perfect accuracy before the dataset is endings are swapped, but fails to relearn the data and only reaches $50\%$ accuracy afterward. The TDSNN (orange) is able to match the TDNN (teal) Surprisingly, the CSNN (blue) performance is almost able to match the LSTM (purple) performance. However the variance in the CSNN performance is much greater than the LSTM.
 
-\subsection*{Perturbation}
+%\subsection*{Perturbation}
 
-Another important property of each of these models is the robustness to temporal noise. We introduce an $\alpha$ parameters which represents the probability that a character is swapped for another character. 
+%Another important property of each of these models is the robustness to temporal noise. We introduce an $\alpha$ parameters which represents the probability that a character is swapped for another character. 
 
 %\subsection*{Continuous Dataset}
 
 \section*{Conclusion}
 
+We have shown two possible spiking architectures for learning changing patterns in time-series data in a semi-supervised fashion.
 
 
 \newpage
