@@ -58,7 +58,7 @@ class KNNClassifier:
     def classify(self, new_sample):
         distances = [(None, float('inf'))]*self.k
         for sample, label in self.data:
-            dist = torch.sum(torch.abs(new_sample-sample))
+            dist = torch.dist(new_sample, sample)
             for i, (_, best_dist) in enumerate(distances):
                 if dist < best_dist:
                     distances[i] = (label, dist)
