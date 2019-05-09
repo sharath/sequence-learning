@@ -4,13 +4,13 @@
 \usepackage[draft]{graphicx}
 \usepackage{amsmath}
 \usepackage[backend=biber,sorting=none]{biblatex}
-\usepackage[margin=1.2in]{geometry}
+%\usepackage{geometry}
 \usepackage{float}
 \addbibresource{mybib.tex}
 
 \title{Dynamical Neural Network Models\\for Sequence Learning}
 \author{Sharath Ramkumar\\
-Advisor: Dr. Robert Kozma\\University of Massachusetts Amherst\\COMPSCI 496: Independent Study}
+Faculty Advisor: Dr. Robert Kozma\\University of Massachusetts Amherst\\COMPSCI 496: Independent Study}
 \date{}
 
 \begin{document}
@@ -22,10 +22,7 @@ In this study, we explore various existing neural network models for learning se
 
 \section*{Introduction}
 
-Neural network models are able to achieve superhuman performance on static tasks due to recent breakthroughs in deep learning. However, the majority of real-world time-series data is often complex and noisy. As a result, we need dynamic models that can adapt to changing data streams to learn and predict in an robust, semi-supervised fashion. 
-
-\section*{Background}
-There have been some recent studies comparing various models for time-series prediction tasks \cite{cui2016continuous} on discretized data. In this study, we will replicate their results to establish a baseline and propose semi-surpervised spiking neural architectures for performing this task. Spiking neurons \cite{gerstner2002spiking} are biologically-inspired models of neurons. Spiking neural networks (SNNs) \cite{maass1997networks} are organized connections between these spiking neurons which have more energy efficient \cite{cruz2012energy} implementations on neuromorphic hardware.
+Neural network models are able to achieve superhuman performance on static tasks due to recent breakthroughs in deep learning. However, the majority of real-world time-series data is often complex and noisy. As a result, we need dynamic models that can adapt to changing data streams to learn and predict in an robust, semi-supervised fashion. There have been some recent studies comparing various models for time-series prediction tasks \cite{cui2016continuous} on discretized data. In this study, we will replicate their results on some of the models to establish a baseline and propose semi-surpervised spiking neural architectures for performing these tasks. Spiking neurons \cite{gerstner2002spiking} are biologically-inspired models of neurons. Spiking neural networks (SNNs) \cite{maass1997networks} are organized connections between these spiking neurons which have more energy efficient \cite{cruz2012energy} implementations on neuromorphic hardware.
 
 \section*{Methodology}
 
@@ -69,10 +66,11 @@ To present each of these discrete categories to the model, we have to encode the
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\linewidth]{../notebooks/matrix-distances.png}
+    \includegraphics[width=\linewidth]{../notebooks/matrix-distances.png}
     \caption{Heatmap of squared errors between distributed random encodings for the sequence characters, with $-1$ as the separating bit for ease of visualization.}
     \label{fig:encoding-distance}
 \end{figure}
+
 
 \section*{Supervised Models}
 
@@ -83,14 +81,14 @@ Long short-term memory \cite{hochreiter1997long} networks are able to achieve st
 \subsubsection*{Long short-term memory (LSTM) Behavior}
 There are many different variants of LSTM implementations. In this work, the LSTM cell has a forget gate, but no peephole connections. The equations defining the forward pass of the hidden layer in the LSTM model are:
 
-\begin{align*}
+\begin{align}
     i_t &= \sigma\left(W_{ii}x_t + W_{hi}h_{t-1} + b_i\right)\\
     f_t &= \sigma\left(W_{if}x_t + W_{hf}h_{t-1} + b_f\right)\\
     g_t &= \tanh\left(W_{ig}x_t + W_{hg}h_{t-1} + b_g\right)\\
     o_t &= \sigma\left(W_{io}x_t + W_{ho}h_{t-1} + b_o\right)\\
     c_t &= c_{t-1}\ast f_t + i_t \ast g_t\\
-    h_t &= o_t \ast \tanh\left(c_t\right)\\
-\end{align*}
+    h_t &= o_t \ast \tanh\left(c_t\right)
+\end{align}
 
 In the above equations, $\sigma$ is the sigmoid activation function, $i_t$ is the input gate, $f_t$ is the forget gate, $g_t$ is the cell gate, $o_t$ is the output gate and the $c_t$ and $h_t$ are the cell and hidden states respectively. The $\ast$ operator is the element-wise product operator. The biases $\left(b_i, b_f, b_g, b_o\right)$ and weights $\left(W_{ii}, W_{hi}, W_{if}, W_{hf}, W_{ig}, W_{hg},W_{io}, W_{ho}\right)$ are initialized randomly uniformly from $\left[-\frac{1}{\sqrt{k}}, \frac{1}{\sqrt{k}}\right]$, where $k$ is the number of hidden units. \cite{jozefowicz2015empirical} 
 
@@ -103,29 +101,74 @@ In the above equations, $\sigma$ is the sigmoid activation function, $i_t$ is th
 
 \subsection*{Time-delay neural networks (TDNN)}
 
-Time-delay neural networks (TDNN) are feed-forward neural networks trained using a lag on a window of previous data. \cite{waibel1995phoneme} For this task, the TDNN is trained on the last $3000$ samples every $1000$ elements with a lag of $10$. \cite{rojas1996backpropagation} The model has $250$ input neurons that are fully connected to a hidden layer of $200$ neurons. The hidden layers utilize the ReLU non-linearity and are fully connected to $25$ output neurons. The model proposed by Cui et al. has a sigmoid non-linearity in the hidden layer. We replaced the non-linearity to allow for conversion into a spiking neural network. As with the LSTM model, the output is classified using the nearest neighbor decoder.
+Time-delay neural networks (TDNN) are feed-forward neural networks trained using a lag on a window of previous data. \cite{waibel1995phoneme} For this task, the TDNN is trained on the last $3000$ samples every $1000$ elements with a lag of $10$. \cite{rojas1996backpropagation} The model has $250$ input neurons that are fully connected to a hidden layer of $200$ neurons. The hidden layers utilize the ReLU non-linearity and are fully connected to $25$ output neurons for the prediction. The model proposed by Cui et al. has a sigmoid non-linearity in the hidden layer. We replaced the non-linearity to allow for conversion into a spiking neural network. As with the LSTM model, the output is classified using the nearest neighbor decoder.
 
 The network can be formulated as an equation in terms of the 250 length input vector $x_t$ and the ReLU non-linearity function $R(z)$:
 \begin{equation}
     \text{TDNN}(x_t) = R\left(x_tW_{ih}^T + b_i\right)W_{ho}^T + b_h
     \label{eq:tdnn}
 \end{equation}
-In equation \ref{eq:tdnn}, the biases $\left(b_i, b_h\right)$ and the weights $\left(W_{ih}, W_{ho}\right)$ are are initialized randomly uniformly from $\left[-\frac{1}{\sqrt{k_i}}, \frac{1}{\sqrt{k_i}}\right]$, where $k_i$ is the number of input features to the respective layer. The weights are then learned through gradient descent.
+The biases $\left(b_i, b_h\right)$ and the weights $\left(W_{ih}, W_{ho}\right)$ are initialized randomly uniformly from $\left[-\frac{1}{\sqrt{k_i}}, \frac{1}{\sqrt{k_i}}\right]$, where $k_i$ is the number of input features to the respective layer. The weights are then learned through gradient descent.
 
 \subsection*{Time-delay spiking neural networks (TDSNN)}
 
-A common approach to training spiking neural networks is through the transfer of weights learned through backpropagation on an identical non-spiking neural network and then scaling the weights. \cite{diehl2015fast} Using this approach, we can convert the TDNN model trained with backpropagtion into an equivalent spiking network using the approach developed by Diehl et al. (2016)
+A common approach to training spiking neural networks is through the transfer of weights learned through backpropagation on an identical non-spiking neural network and then scaling the weights through data-based normalization. Using this approach, we can convert the TDNN model trained with backpropagtion into an equivalent spiking network. \cite{rueckauer2017conversion}
 
-This method works reasonably well when the output values of the network are positive, however the output has values that are negative. To facilitate these negative spikes, the output layer was doubled in size and the negative weight matrix of the original connections was concatenated. The same was done for the bias. The positive sum of spikes was subtracted from the negative sum of spikes and then divided by the runtime to obtain an approximation of the original network's output.
+\subsubsection*{Conversion}
+The converted network has neurons that output discrete spikes rather than continuous values. Each neuron accumulates voltage $v$ from the previous layer until the voltage reaches a threshold. After the voltage surpasses the threshold, the neuron emits a discrete spike to the next layer and the voltage is reset by subtraction of the threshold. \cite{diehl2015fast} 
 
-The drawback of using this method when we need to approximate real-values is the loss of precision based on the duration of the input. For this task, we show the input for $500$ simulated milliseconds. The conversion loss, that is, the euclidean distance between the output of the TDNN and the TDSNN is show in Figure \ref{fig:clfig}. As with the other models, the output is classified using the nearest neighbor decoder.
+The change in the voltages of each of the neurons in the hidden layer $\frac{dV_h}{dt}$ at time $t$ can be written in terms of the input $x_t$, the scale for the connection between the input and hidden layer found through the data-based normalization $\lambda_{ih}$, the transferred connection and bias weights from the TDNN $\left(W_{ih}, b_{i}\right)$, and the neuron spike threshold $\tau$ as:
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\linewidth]{../diagrams/tdnn.png}
-    \caption{The network architecture for the TDNN/TDSNN model.}
-    \label{fig:lstm-online-model}
-\end{figure}
+\begin{equation}
+    \frac{dV^{\left(h\right)}_t}{dt} = \lambda_{ih}\left(W_{ih}^Tx_t + b_i\right) - S^{\left(h\right)}_{t-1}\tau
+\end{equation}
+
+where $S^{\left(h\right)}_{t}$ are the spikes in the hidden layer at time $t$. For each neuron $j$ in the hidden layer, the spike is defined as:
+
+\begin{equation}
+    S^{\left(h,j\right)}_{t} = \begin{cases} 1 & V^{\left(h,j\right)}_{t}\geq \tau \\
+      0 & \text{else.} \\ \end{cases}
+\end{equation}
+
+Similarly the following equation models the change in the voltages of the neurons in the output layer of the TDSNN:
+
+\begin{equation}
+    \frac{dV^{\left(o\right)}_t}{dt} = \lambda_{ho} \left(W_{ho}^TS^{\left(h\right)}_{t} + b_h\right) - S^{\left(o\right)}_{t-1} \tau
+\end{equation}
+
+where $\lambda_{ho}$ is the scale found through the data-based normalization for the connection between the hidden and output layer. $S^{\left(o\right)}_{t}$ is the spikes in the output layer at time $t$ which is defined for each neuron $j$ as:
+
+\begin{equation}
+    S^{\left(o,j\right)}_{t} = \begin{cases} 1 & V^{\left(o,j\right)}_{t}\geq \tau \\
+      0 & \text{else.} \\ \end{cases}
+\end{equation}
+
+\subsubsection*{Original Readout}
+The original readout method proposed by Rueckauer et al. looks at the voltage of the output layer rather than the spikes. This readout method combined with the the subtractive reset mechanism of the spiking neurons in the conversion method perform well on various tasks, \cite{rueckauer2017conversion} but in some cases we may not want to use the voltages. One alternative may be to use the average sum of spikes over the total runtime $T$ in the output layer. This approximation of the TDNN output values can be written as:
+
+\begin{equation}
+    \text{TDSNN}_{\text{readout1}} = \frac{1}{T} \sum_{t=1}^{T}{S_t^{\left(o\right)}}
+\end{equation}
+
+
+\subsubsection*{Negative Readout}
+When the output values produced by the TDNN is negative, the average sum of spikes fails to account for the negative output values. To account for these negative spikes, the output layer was doubled in size and the negative weight matrix of the original connections was concatenated. The same was done for the bias. The positive sum of spikes was subtracted from the negative sum of spikes and then divided by the runtime $T$ to obtain an approximation of the original network's output. For a TDNN that has $l$ neurons in the output layer, the change in voltage for each neuron $j$ in the output layer can be written as:
+
+\begin{equation}
+    \frac{dV^{\left(o\right)}_t}{dt} = 
+    \begin{cases} \lambda_{ho} \left(W_{ho}^TS^{\left(h\right)}_{t} + b_h\right) - S^{\left(o,1:l\right)}_{t-1} \tau & 1 \leq j \leq l  \\
+      \lambda_{ho} \left(-W_{ho}^TS^{\left(h\right)}_{t} - b_h\right) - S^{\left(o,l+1:2l\right)}_{t-1} \tau & l+1 \leq j \leq 2l \\ \end{cases}
+    \label{eq:readout}
+\end{equation}
+
+In Equation \ref{eq:readout}, $W_{ho}$ refers to the original TDNN's weight matrix and $S^{\left(o,j\right)}_{t}$ now has $j \in [1, 2l]$. The new readout is now:
+
+\begin{equation}
+    \text{TDSNN}_{\text{readout2}} = \frac{1}{T} \sum_{t=1}^{T}{\left[S_t^{\left(o,1:l\right)} - S_t^{\left(o,l+1:2l\right)}\right]}
+\end{equation}
+
+\subsubsection*{Conversion Loss}
+The drawback of using spikes instead of voltages to approximate real-values is the loss of precision based on the duration of the input. For this task, we show the input for $500$ simulated milliseconds. The conversion loss, defined as the euclidean distance between the output of the TDNN and the TDSNN is shown in Figure \ref{fig:clfig}.
 
 \begin{figure}[H]
     \centering
@@ -134,13 +177,22 @@ The drawback of using this method when we need to approximate real-values is the
     \label{fig:clfig}
 \end{figure}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{../diagrams/tdnn.png}
+    \caption{The network architecture for the TDNN/TDSNN model.}
+    \label{fig:lstm-online-model}
+\end{figure}
+
 \section*{Semi-supervised Models}
 
-\subsection*{K-Nearest Neighbor (KNN)}
+\subsection*{K-Nearest Neighbors (KNN)}
+
+The K-Nearest Neighbors (KNN) model makes a prediction $\hat{d}_{t+1}$ on an input $x_t$ at time $t$, where $x_t$ is the concatenation of the encodings of the characters $d_i$ for $i \in [t-9, t]$. At time $t+1$, the KNN stores the tuple $(x_t, d_{t+1})$. To make a prediction, the KNN computes the Euclidean distance from $x_t$ to all other samples. The majority vote of the top $k$ samples is taken as the prediction for $d_{t+1}$.
 
 \subsection*{Columnar Spiking Neural Network (CSNN)}
 
-While conversion is one way to train a neural network, it is not energy efficient to perform backpropagation and then convert. We propose a spiking neural network architecture, with $10$ inputs, each fully connected to $1$ of $10$ columns of $100$ spiking neurons with randomly initialized weights. Each of the columns has a Hebbian connection to each of the other columns initialized with zero weights. To map the spikes from this network, we train a K-Nearest Neighbor model using previous spikes and values. \cite{beliaev2007time} The model diagram is shown in Figure \ref{fig:csnn-network-diagram}.
+While conversion is one way to train a neural network, it is a supervised method that is not energy efficient on hardware implementations. We propose a spiking neural network architecture, with $k$ inputs, each fully connected to $1$ of $k$ columns of $L$ Leaky Integrate-and-Fire (LIF) neurons with randomly initialized weights. \cite{gerstner2002spiking} Each neuron in each column has a zero-weight connection to each neuron in each of the other columns. The inter-column connections have a Hebbian-inspired update rule. To map the spikes from this network, we use the K-Nearest Neighbors model with the sum of spikes of each neuron in each column over the runtime $T$. \cite{beliaev2007time} The model diagram is shown in Figure \ref{fig:csnn-network-diagram}.
 
 \begin{figure}[H]
     \centering
@@ -164,10 +216,6 @@ where $\eta$ is the learning rate and $\Tilde{s}$ is the mean spiking activity i
 \end{equation}
 
 In equation \ref{eq:mean_spikes_equation}, $s_i$ is the sum of spikes in a column over the duration of the input. The weight updates for this model are computed at the end of each input rather than continuously.
-
-%\subsection*{Leaky Integrate-and-Fire (LIF) Neuron Behavior}
-
-%The Leaky Integrate-and-Fire neuron is used the in the 
 
 \section*{Experiments}
 
