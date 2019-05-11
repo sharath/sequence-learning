@@ -21,6 +21,3 @@
 ### TDNN to TDSNN Conversion Loss
 
 ![Results](results/conversion-loss.png)
-
-
-## References
